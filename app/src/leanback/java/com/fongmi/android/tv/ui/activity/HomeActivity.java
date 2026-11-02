@@ -240,13 +240,16 @@ public class HomeActivity extends BaseActivity implements CustomTitleView.Listen
                 com.fongmi.android.tv.bean.Result result = com.fongmi.android.tv.api.SiteApi.homeContent(iqiyiSite);
                 if (result != null && result.getList() != null && !result.getList().isEmpty()) {
                     com.fongmi.android.tv.setting.Setting.putIqiyiRecommends(result.toString());
-                    List<Vod> list = result.getList();
-                    mIqiyiRecommends.clear();
-                    for (Vod vod : list) {
+                    // 线程安全：后台线程只组装快照，绝不直接动 mIqiyiRecommends——
+                    // banner 轮播/绑定在主线程读这个列表，后台 clear+add 会触发 ConcurrentModificationException
+                    List<Vod> fresh = new ArrayList<>();
+                    for (Vod vod : result.getList()) {
                         vod.setSite(iqiyiSite);
-                        mIqiyiRecommends.add(vod);
+                        fresh.add(vod);
                     }
                 runOnUiThread(() -> {
+                    mIqiyiRecommends.clear();
+                    mIqiyiRecommends.addAll(fresh);
                     setHomeBanner(mIqiyiRecommends);
                 });
             } else {

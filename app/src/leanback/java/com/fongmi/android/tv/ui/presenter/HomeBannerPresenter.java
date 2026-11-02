@@ -78,7 +78,10 @@ public class HomeBannerPresenter extends Presenter {
         // Right column always shows recommendation layout
         holder.binding.recommendLayout.setVisibility(View.VISIBLE);
 
-        List<Vod> recommends = item.getRecommends();
+        // 线程安全：这里拿到的必须是快照。若直接持有 item.getRecommends() 的 subList 视图，
+        // 后台刷新（HomeActivity.loadIqiyiRecommends 的后台线程 clear+add）会使视图失效，
+        // 轮播 Runnable 每 5 秒 get() 时抛 ConcurrentModificationException（ArrayList$SubList.get）
+        List<Vod> recommends = new java.util.ArrayList<>(item.getRecommends());
         List<Vod> rightList = new java.util.ArrayList<>();
         List<Vod> carouselList = new java.util.ArrayList<>();
 
