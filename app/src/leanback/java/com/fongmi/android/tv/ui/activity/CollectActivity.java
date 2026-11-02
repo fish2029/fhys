@@ -23,6 +23,7 @@ import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.bean.Collect;
 import com.fongmi.android.tv.bean.Site;
+import com.fongmi.android.tv.bean.Vod;
 import com.fongmi.android.tv.databinding.ActivityCollectBinding;
 import com.fongmi.android.tv.model.SiteViewModel;
 import com.fongmi.android.tv.setting.Setting;
@@ -149,8 +150,11 @@ public class CollectActivity extends BaseActivity {
         mViewModel = new ViewModelProvider(this).get(SiteViewModel.class);
         mViewModel.getSearch().observe(this, result -> {
             if (result.getList().isEmpty()) return;
-            getFragment().addVideo(result.getList());
-            mAdapter.add(Collect.create(result.getList()));
+            // 快照：搜索结果由多个站点线程并发 postValue 回来，fragment 与 Collect 不能共用
+            // 站点返回的活列表，否则一边遍历一边被改就是 ConcurrentModificationException
+            List<Vod> items = new ArrayList<>(result.getList());
+            getFragment().addVideo(items);
+            mAdapter.add(Collect.create(items));
             mBinding.pager.getAdapter().notifyDataSetChanged();
         });
     }

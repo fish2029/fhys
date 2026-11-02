@@ -182,8 +182,10 @@ public class TypeFragment extends BaseFragment implements CustomScroller.Callbac
 
     private void addVideo(Result result) {
         Style style = result.getStyle(getStyle());
-        if (style.isList()) mAdapter.addAll(mAdapter.size(), result.getList());
-        else addGrid(result.getList(), style);
+        // 快照：result.getList() 是站点返回的活列表，直接交给 addAll 遍历有被并发改动的风险
+        List<Vod> snapshot = new ArrayList<>(result.getList());
+        if (style.isList()) mAdapter.addAll(mAdapter.size(), snapshot);
+        else addGrid(snapshot, style);
         checkMore();
     }
 
@@ -197,12 +199,14 @@ public class TypeFragment extends BaseFragment implements CustomScroller.Callbac
         int size = Product.getColumn(style) - mLast.size();
         if (size == 0) return false;
         size = Math.min(size, items.size());
-        mLast.addAll(mLast.size(), items.subList(0, size));
-        addGrid(items.subList(size, items.size()), style);
+        // subList 是视图不是拷贝：直接交给 addAll，内部 toArray 遍历时父列表一旦被改就会 CME
+        mLast.addAll(mLast.size(), new ArrayList<>(items.subList(0, size)));
+        addGrid(new ArrayList<>(items.subList(size, items.size())), style);
         return true;
     }
 
     private void addGrid(List<Vod> items, Style style) {
+        if (items == null || items.isEmpty()) return;
         if (checkLastSize(items, style)) return;
         List<ListRow> rows = new ArrayList<>();
         VodPresenter presenter = new VodPresenter(this, style);

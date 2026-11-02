@@ -99,8 +99,9 @@ public class CollectFragment extends BaseFragment implements CustomScroller.Call
         int size = Product.getColumn() - mLast.size();
         if (size == 0) return false;
         size = Math.min(size, items.size());
-        mLast.addAll(mLast.size(), items.subList(0, size));
-        addVideo(items.subList(size, items.size()));
+        // subList 是视图不是拷贝：直接交给 addAll，内部 toArray 遍历时父列表一旦被改就会 CME
+        mLast.addAll(mLast.size(), new ArrayList<>(items.subList(0, size)));
+        addVideo(new ArrayList<>(items.subList(size, items.size())));
         return true;
     }
 
@@ -109,10 +110,15 @@ public class CollectFragment extends BaseFragment implements CustomScroller.Call
     }
 
     public void addVideo(List<Vod> items) {
-        if (checkLastSize(items) || getActivity() == null || getActivity().isFinishing()) return;
+        if (items == null || items.isEmpty()) return;
+        // 快照：items 可能是站点返回的活列表（全站聚合搜索是多站并发 postValue），
+        // 也可能是上一层的 subList 视图。不拷贝就直接遍历，父列表被别的线程改结构时
+        // 会抛 ConcurrentModificationException（ArrayList$SubList.get）弹崩溃框。
+        List<Vod> snapshot = new ArrayList<>(items);
+        if (checkLastSize(snapshot) || getActivity() == null || getActivity().isFinishing()) return;
         List<ListRow> rows = new ArrayList<>();
         VodPresenter presenter = new VodPresenter(this);
-        for (List<Vod> part : Lists.partition(items, Product.getColumn())) {
+        for (List<Vod> part : Lists.partition(snapshot, Product.getColumn())) {
             mLast = new ArrayObjectAdapter(presenter);
             mLast.addAll(0, part);
             rows.add(new ListRow(mLast));
