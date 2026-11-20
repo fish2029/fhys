@@ -95,7 +95,8 @@ public class Config {
 
     public static Config vod() {
         Config item = AppDatabase.get().getConfigDao().findOne(0);
-        return item == null ? create(0, "https://cnb.cool/MyTest2026/tvbox/-/git/raw/main/tvbox.json") : item;
+        // 已移除内置仓库地址，不再预置默认配置源；用户需在应用内自行添加仓库。
+        return item == null ? create(0) : item;
     }
 
     public static Config live() {

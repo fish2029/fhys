@@ -18,7 +18,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * 「繁华影视」后台（绿豆UI9，http://612526.xyz:9977）的统一接口层。
+ * 「繁华影视」后台（绿豆UI9）的统一接口层。
  *
  * 后台是 SPA + Bearer token 的形态：
  *   POST /api/login  {username,password}  → {"token":"..."}
@@ -32,8 +32,11 @@ public class BoxApi {
 
     private static final String TAG = "BoxApi";
 
-    /** 后台地址：浏览器里 #/f/box_marquee_notice 那个后台 */
-    public static final String BASE = "http://612526.xyz:9977";
+    /**
+     * 后台地址：浏览器里 #/f/box_marquee_notice 那个后台。
+     * 已移除内置仓库地址，按需在此填写你的后台地址。
+     */
+    public static final String BASE = "";
     /** 后台账号。改了后台密码这里要跟着改，否则所有后台功能会静默失效。 */
     private static final String USER = "admin";
     private static final String PASS = "admin888";

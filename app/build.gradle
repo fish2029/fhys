@@ -148,7 +148,7 @@ android {
             def disableR8 = project.hasProperty('disableR8') && project.property('disableR8') == 'true'
             def r8On = !disableR8
             minifyEnabled = r8On
-            shrinkResources = true
+            shrinkResources = r8On
             // 签名不在这里指定：productFlavors 里 mobile 用 signingConfigs.mobile、
             // leanback 用 signingConfigs.tv。若在此处写死 signingConfig 会覆盖 flavor 级设置，
             // 导致两个版本用同一证书，手机版新签名就装不上、也覆盖不了旧包。
