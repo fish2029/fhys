@@ -36,7 +36,6 @@ public class SiteCategory {
         String api = lower(site.getApi());
         String key = lower(site.getKey());
         String jar = lower(site.getJar());
-        String ext = lower(site.getExt());
 
         if (contains(name, "短剧", "短劇", "微剧", "微劇", "红果", "河马剧场", "河馬劇場")
                 || contains(api, "duanju", "minidrama")) {
@@ -46,12 +45,12 @@ public class SiteCategory {
                 || contains(api, "music")) {
             return MUSIC;
         }
-        // PY 站点：type=3（本地/远程 py、js 蜘蛛），或任一字段带 py/python 特征
-        if (site.getType() == 3
-                || api.endsWith(".py") || api.contains(".py") || api.contains("pyspider")
-                || pyToken(key) || pyToken(name) || pyToken(api) || pyToken(jar) || pyToken(ext)) {
+        // PY 站点：以 App 自身判定为准——BaseLoader.isPy 就是 api 含 ".py"；
+        // 另外兼容名字/key/jar 里明写 py 的源。绝不用 type=3 一刀切，避免把 JAR 内站点扫进 PY。
+        if (api.contains(".py") || jar.endsWith(".py") || pyToken(key) || pyToken(name)) {
             return PY;
         }
+        // 其余（csp_ 开头的 JAR 蜘蛛、.js 的 JS 蜘蛛、普通 json 接口）都归 JAR内站点
         return JAR;
     }
 
