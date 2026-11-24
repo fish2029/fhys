@@ -92,6 +92,35 @@
             android:layout_marginTop="8dp"
             app:flexWrap="wrap" />
 
+        <!-- 全局背景：作用在页面根布局，选“无”则用回页面自身背景 -->
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/theme_background"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/backgroundColors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:flexWrap="wrap" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/backgroundNone"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/shape_item"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/theme_background_none"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
         <!-- 圆角 -->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"

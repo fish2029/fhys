@@ -148,6 +148,8 @@
     <string name="theme_preview">预览</string>
     <string name="theme_reset">恢复默认</string>
     <string name="theme_done">完成</string>
+    <string name="theme_background">全局背景</string>
+    <string name="theme_background_none">无（用回原背景）</string>
     <string name="setting_home">首页设置</string>
     <string name="setting_home_menu">首页功能</string>
     <string name="setting_home_history">显示继续观看</string>

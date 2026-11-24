@@ -33,6 +33,7 @@ public class ThemeStyleDialog extends BaseAlertDialog {
     private int buttonColor;
     private int pressedColor;
     private int radius;
+    private int backgroundColor;
 
     public static void show(Fragment fragment) {
         new ThemeStyleDialog().show(fragment.getChildFragmentManager(), null);
@@ -56,6 +57,7 @@ public class ThemeStyleDialog extends BaseAlertDialog {
         buttonColor = Theme.getButtonColor(context);
         pressedColor = Theme.getPressedColor(context);
         radius = Theme.getRadiusDp(context);
+        backgroundColor = Theme.getBackgroundColor(context);
 
         binding.enable.setChecked(enabled);
         binding.enable.setOnCheckedChangeListener((view, value) -> {
@@ -66,6 +68,12 @@ public class ThemeStyleDialog extends BaseAlertDialog {
         buildPalette(binding.textColors, TYPE_TEXT);
         buildPalette(binding.buttonColors, TYPE_BUTTON);
         buildPalette(binding.pressedColors, TYPE_PRESSED);
+        buildBackgrounds();
+        binding.backgroundNone.setOnClickListener(view -> {
+            backgroundColor = Theme.DEFAULT_BACKGROUND;
+            buildBackgrounds();
+            save();
+        });
 
         binding.radius.setProgress(radius);
         binding.radiusValue.setText(String.valueOf(radius));
@@ -111,6 +119,28 @@ public class ThemeStyleDialog extends BaseAlertDialog {
         }
     }
 
+    /** 背景色板：预设纯色，选中的加白圈 */
+    private void buildBackgrounds() {
+        FlexboxLayout container = binding.backgroundColors;
+        container.removeAllViews();
+        int size = ResUtil.dp2px(32);
+        int margin = ResUtil.dp2px(6);
+        for (int preset : Theme.PRESETS) {
+            View item = new View(requireContext());
+            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(size, size);
+            params.setMargins(margin, margin, margin, margin);
+            item.setLayoutParams(params);
+            item.setTag(preset);
+            item.setBackground(swatch(preset, preset == backgroundColor));
+            item.setOnClickListener(view -> {
+                backgroundColor = (Integer) view.getTag();
+                buildBackgrounds();
+                save();
+            });
+            container.addView(item);
+        }
+    }
+
     private Drawable swatch(int color, boolean selected) {
         GradientDrawable drawable = new GradientDrawable();
         drawable.setShape(GradientDrawable.OVAL);
@@ -134,7 +164,7 @@ public class ThemeStyleDialog extends BaseAlertDialog {
     /** 持久化并实时套用 */
     private void save() {
         Context context = requireContext();
-        ThemeManager.save(context, enabled, textColor, buttonColor, pressedColor, radius);
+        ThemeManager.save(context, enabled, textColor, buttonColor, pressedColor, radius, backgroundColor);
         if (!enabled) return;
         Theme.apply(binding.getRoot());
         ThemeManager.apply(requireActivity());
@@ -147,11 +177,13 @@ public class ThemeStyleDialog extends BaseAlertDialog {
         buttonColor = Theme.DEFAULT_BUTTON;
         pressedColor = Theme.DEFAULT_PRESSED;
         radius = Theme.DEFAULT_RADIUS;
+        backgroundColor = Theme.DEFAULT_BACKGROUND;
         binding.enable.setChecked(false);
         binding.radius.setProgress(radius);
         binding.radiusValue.setText(String.valueOf(radius));
         buildPalette(binding.textColors, TYPE_TEXT);
         buildPalette(binding.buttonColors, TYPE_BUTTON);
         buildPalette(binding.pressedColors, TYPE_PRESSED);
+        buildBackgrounds();
     }
 }

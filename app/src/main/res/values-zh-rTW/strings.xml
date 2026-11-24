@@ -146,6 +146,8 @@
     <string name="theme_preview">預覽</string>
     <string name="theme_reset">恢復預設</string>
     <string name="theme_done">完成</string>
+    <string name="theme_background">全域背景</string>
+    <string name="theme_background_none">無（用回原背景）</string>
     <string name="setting_home">首頁設定</string>
     <string name="setting_home_menu">首頁功能</string>
     <string name="setting_home_history">顯示繼續觀看</string>

@@ -30,6 +30,7 @@ public abstract class BaseFragment extends Fragment {
         isViewCreated = true;
         // 全局主题：新页面/新视图一律读同一份配置并即时套用
         ThemeManager.apply(view);
+        ThemeManager.applyBackground(view);
         if (getUserVisibleHint()) {
             lazyLoad();
             isDataLoaded = true;

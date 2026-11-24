@@ -150,6 +150,8 @@
     <string name="theme_preview">Preview</string>
     <string name="theme_reset">Reset default</string>
     <string name="theme_done">Done</string>
+    <string name="theme_background">Page background</string>
+    <string name="theme_background_none">None (default)</string>
     <string name="setting_home">Home Setting</string>
     <string name="setting_home_menu">Home Navigation</string>
     <string name="setting_home_history">Keep Watching</string>
