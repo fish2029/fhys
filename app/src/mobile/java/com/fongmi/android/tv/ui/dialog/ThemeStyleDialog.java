@@ -13,6 +13,7 @@ import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.databinding.DialogThemeStyleBinding;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.Theme;
+import com.fongmi.android.tv.utils.ThemeManager;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -133,16 +134,14 @@ public class ThemeStyleDialog extends BaseAlertDialog {
     /** 持久化并实时套用 */
     private void save() {
         Context context = requireContext();
-        Theme.save(context, enabled, textColor, buttonColor, pressedColor, radius);
+        ThemeManager.save(context, enabled, textColor, buttonColor, pressedColor, radius);
         if (!enabled) return;
         Theme.apply(binding.getRoot());
-        if (requireActivity().getWindow() != null) {
-            Theme.apply(requireActivity().getWindow().getDecorView());
-        }
+        ThemeManager.apply(requireActivity());
     }
 
     private void onReset() {
-        Theme.reset(requireContext());
+        ThemeManager.reset(requireContext());
         enabled = false;
         textColor = Theme.DEFAULT_TEXT;
         buttonColor = Theme.DEFAULT_BUTTON;

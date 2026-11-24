@@ -15,7 +15,7 @@ import androidx.core.os.HandlerCompat;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.Task;
-import com.fongmi.android.tv.utils.Theme;
+import com.fongmi.android.tv.utils.ThemeManager;
 import com.fongmi.hook.Hook;
 import com.github.catvod.Init;
 import com.google.gson.Gson;
@@ -86,6 +86,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
         super.onCreate();
         Notify.createChannel();
         Task.setSearchThreads(Setting.getSearchThreads());
+        ThemeManager.load(this);
         registerActivityLifecycleCallbacks(this);
     }
 
@@ -102,15 +103,15 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
         if (activity != activity()) this.activity = activity;
-        // 全局主题：回到任意页面时实时套用
-        if (activity.getWindow() != null && activity.getWindow().peekDecorView() != null) {
-            Theme.apply(activity.getWindow().getDecorView());
-        }
+        // 全局主题：配置集中在 ThemeManager，回到任意页面时实时套用并监听界面变化
+        ThemeManager.apply(activity);
+        ThemeManager.watch(activity);
     }
 
     @Override
     public void onActivityPaused(@NonNull Activity activity) {
         if (activity == activity()) this.activity = null;
+        ThemeManager.unwatch(activity);
     }
 
     @Override

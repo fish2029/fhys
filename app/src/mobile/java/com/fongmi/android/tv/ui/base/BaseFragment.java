@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewbinding.ViewBinding;
 
+import com.fongmi.android.tv.utils.ThemeManager;
+
 public abstract class BaseFragment extends Fragment {
 
     private boolean isViewCreated;
@@ -26,6 +28,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         isViewCreated = true;
+        // 全局主题：新页面/新视图一律读同一份配置并即时套用
+        ThemeManager.apply(view);
         if (getUserVisibleHint()) {
             lazyLoad();
             isDataLoaded = true;
