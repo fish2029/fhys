@@ -238,7 +238,7 @@ public class Theme {
         if (view instanceof FloatingActionButton) {
             FloatingActionButton fab = (FloatingActionButton) view;
             fab.setBackgroundTintList(ColorStateList.valueOf(getButtonColor(context)));
-            fab.setStrokeColor(ColorStateList.valueOf(getPressedColor(context)));
+            fab.setStrokeColor(getPressedColor(context));
             fab.setImageTintList(ColorStateList.valueOf(text));
             return;
         }
