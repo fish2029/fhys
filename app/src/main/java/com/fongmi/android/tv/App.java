@@ -116,6 +116,9 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+        // 页面初始化阶段就套用：首帧不再是旧颜色
+        if (activity.getWindow() == null) return;
+        activity.getWindow().getDecorView().post(() -> ThemeManager.apply(activity));
     }
 
     @Override

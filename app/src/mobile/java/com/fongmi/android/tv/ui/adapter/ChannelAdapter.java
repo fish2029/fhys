@@ -12,6 +12,7 @@ import com.fongmi.android.tv.bean.Epg;
 import com.fongmi.android.tv.bean.EpgData;
 import com.fongmi.android.tv.databinding.AdapterChannelBinding;
 import com.fongmi.android.tv.databinding.AdapterChannelPortraitBinding;
+import com.fongmi.android.tv.utils.Theme;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +107,8 @@ public class ChannelAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         int textColorRes = com.fongmi.android.tv.R.color.selector_text;
         holder.binding.name.setTextColor(androidx.appcompat.content.res.AppCompatResources.getColorStateList(context, textColorRes));
         holder.binding.number.setTextColor(androidx.appcompat.content.res.AppCompatResources.getColorStateList(context, textColorRes));
-        holder.binding.epg.setTextColor(android.graphics.Color.parseColor("#CCFFFFFF"));
+        // 开主题时跟随全局文字色，否则沿用原来的半透明白
+        holder.binding.epg.setTextColor(Theme.textOr(context, android.graphics.Color.parseColor("#CCFFFFFF")));
 
         Epg epg = item.getData();
         EpgData currentEpg = null;
