@@ -28,6 +28,7 @@ import com.fongmi.android.tv.impl.CustomTarget;
 import com.github.catvod.utils.Json;
 import com.google.common.net.HttpHeaders;
 
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,6 +37,9 @@ import java.util.Set;
 import jahirfiquitiva.libs.textdrawable.TextDrawable;
 
 public class ImgUtil {
+
+    /** 自建图床：所有海报/影片卡统一走它代理加载，原始链接作为 url 参数拼在后面 */
+    private static final String IMAGE_PROXY = "https://img.612526.xyz";
 
     private static final Set<String> failed = Collections.synchronizedSet(new HashSet<>());
 
@@ -107,6 +111,14 @@ public class ImgUtil {
         if (url.contains("@User-Agent=")) builder.addHeader(HttpHeaders.USER_AGENT, param = url.split("@User-Agent=")[1].split("@")[0]);
         else if (url.contains("doubanio.com")) builder.addHeader(HttpHeaders.REFERER, "https://movie.douban.com/");
         url = param == null ? url : url.split("@")[0];
+        // 全局生效（手机版+电视版）：原始海报链接统一拼接图床接口后再加载
+        if (url.startsWith("http") && !url.startsWith(IMAGE_PROXY)) {
+            try {
+                url = IMAGE_PROXY + "/?url=" + URLEncoder.encode(url, "UTF-8");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return TextUtils.isEmpty(url) ? null : new GlideUrl(url, builder.build());
     }
 

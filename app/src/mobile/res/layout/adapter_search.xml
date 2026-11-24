@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 搜索结果项：左封面卡 + 右信息卡，两张卡片尺寸/圆角/描边完全一致（以左边为准） -->
+<!-- 搜索结果：海报卡（海报墙），左右两列同款显示 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="128dp"
+    android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@drawable/shape_vod_list"
-    android:foreground="@drawable/shape_vod"
-    android:padding="8dp">
+    android:foreground="@drawable/shape_vod">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/black_10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/info"
+        app:layout_constraintDimensionRatio="3:4"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/Vod.Grid.Large"
@@ -31,53 +29,49 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/shape_vod_site"
         android:ellipsize="end"
-        android:maxWidth="90dp"
+        android:maxWidth="120dp"
         android:singleLine="true"
         android:textColor="@color/text_site"
         android:textSize="12sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/image"
         app:layout_constraintTop_toTopOf="@+id/image"
-        tools:text="泥巴"
+        tools:text="剧圈·APP"
         tools:visibility="visible" />
 
-    <!-- 右侧信息卡：与左侧封面同宽同高、同款圆角描边，文字整体居中 -->
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/info"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/remark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:background="@drawable/shape_vod_desc"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/shape_vod_remark"
+        android:ellipsize="end"
+        android:maxWidth="140dp"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/image"
+        app:layout_constraintStart_toStartOf="@+id/image"
+        tools:text="25集全"
+        tools:visibility="visible" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
         android:gravity="center"
-        android:orientation="vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:maxLines="2"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/image"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:maxLines="3"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            tools:text="蜘蛛人" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/remark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            tools:text="1080p" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/image"
+        tools:text="庆余年第一季" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

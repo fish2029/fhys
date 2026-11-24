@@ -96,7 +96,7 @@ public class CollectFragment extends BaseFragment implements MenuProvider, Colle
         mBinding.recycler.setHasFixedSize(true);
         mBinding.recycler.addOnScrollListener(mScroller);
         mBinding.recycler.setAdapter(mSearchAdapter = new SearchAdapter(this));
-        ((GridLayoutManager) (mBinding.recycler.getLayoutManager())).setSpanCount(getCount());
+        ((GridLayoutManager) (mBinding.recycler.getLayoutManager())).setSpanCount(getSpanCount());
     }
 
     private void setViewModel() {
@@ -131,6 +131,11 @@ public class CollectFragment extends BaseFragment implements MenuProvider, Colle
         int count = ResUtil.isLand(requireActivity()) ? 2 : 1;
         if (ResUtil.isPad()) count++;
         return count;
+    }
+
+    /** 搜索结果海报墙列数：手机竖屏左右两列 */
+    private int getSpanCount() {
+        return ResUtil.isLand(requireActivity()) ? 3 : 2;
     }
 
     private void setCollect(Result result) {
