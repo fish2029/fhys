@@ -2,6 +2,7 @@ package com.fongmi.android.tv.utils;
 
 import android.text.TextUtils;
 
+import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.bean.Site;
 
 import java.util.ArrayList;
@@ -73,6 +74,37 @@ public class SiteCategory {
             }
         }
         return result;
+    }
+
+    /**
+     * 当前站源里实际存在的分类（按固定顺序），用于动态生成顶部分类按钮。
+     */
+    public static List<Integer> categories(List<Site> sites) {
+        List<Integer> result = new ArrayList<>();
+        if (sites == null) return result;
+        for (int category : ORDER) {
+            for (Site site : sites) {
+                if (of(site) == category) {
+                    result.add(category);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /** 分类标题文案资源 id（运行时动态取，不写死在布局里） */
+    public static int getLabel(int category) {
+        switch (category) {
+            case PY:
+                return R.string.site_category_py;
+            case MUSIC:
+                return R.string.site_category_music;
+            case DRAMA:
+                return R.string.site_category_drama;
+            default:
+                return R.string.site_category_jar;
+        }
     }
 
     /**
