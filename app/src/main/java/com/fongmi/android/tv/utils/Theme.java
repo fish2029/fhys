@@ -1,6 +1,7 @@
 package com.fongmi.android.tv.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
@@ -12,6 +13,9 @@ import android.widget.EditText;
 
 import com.fongmi.android.tv.R;
 import com.github.catvod.utils.Prefers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 全局主题：自定义按钮样式（背景色 / 圆角 / 点击态）+ 全局文字颜色。
@@ -35,14 +39,29 @@ public class Theme {
     public static final int DEFAULT_PRESSED = 0xFF6D28D9;
     public static final int DEFAULT_RADIUS = 20;
 
-    /** 预设色板（ picker 用） */
-    public static final int[] PRESETS = {
-            0xFFFFFFFF, 0xFF000000,
-            0xFFE53935, 0xFFD81B60, 0xFF8E24AA, 0xFF5E35B1,
-            0xFF3949AB, 0xFF1E88E5, 0xFF00ACC1, 0xFF00897B,
-            0xFF43A047, 0xFF7CB342, 0xFFFB8C00, 0xFFF4511E,
-            0xFF8D6E63, 0xFF546E7A,
-    };
+    /** 预设色板（picker 用）：无彩色 + 12 色相各三档深浅，默认值一并收录 */
+    public static final int[] PRESETS = buildPresets();
+
+    private static int[] buildPresets() {
+        List<Integer> colors = new ArrayList<>();
+        // 无彩色：白 -> 黑
+        int[] gray = {0xFFFFFFFF, 0xFFF5F5F5, 0xFFBDBDBD, 0xFF9E9E9E, 0xFF757575, 0xFF616161, 0xFF424242, 0xFF212121, 0xFF000000};
+        for (int color : gray) colors.add(color);
+        // 有彩色：12 个色相（每 30°）× 浅 / 标准 / 深 三档
+        float[] hsv = new float[3];
+        for (int i = 0; i < 12; i++) {
+            hsv[0] = i * 30f;
+            hsv[1] = 0.45f; hsv[2] = 1.00f; colors.add(Color.HSVToColor(hsv));
+            hsv[1] = 0.80f; hsv[2] = 0.92f; colors.add(Color.HSVToColor(hsv));
+            hsv[1] = 0.88f; hsv[2] = 0.66f; colors.add(Color.HSVToColor(hsv));
+        }
+        // 应用默认的紫色系也放进去，方便直接选回
+        colors.add(DEFAULT_BUTTON);
+        colors.add(DEFAULT_PRESSED);
+        int[] result = new int[colors.size()];
+        for (int i = 0; i < result.length; i++) result[i] = colors.get(i);
+        return result;
+    }
 
     public static boolean isEnabled(Context context) {
         return Prefers.getBoolean(KEY_ENABLE);
