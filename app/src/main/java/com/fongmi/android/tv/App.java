@@ -15,7 +15,6 @@ import androidx.core.os.HandlerCompat;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.Task;
-import com.fongmi.android.tv.utils.ThemeManager;
 import com.fongmi.hook.Hook;
 import com.github.catvod.Init;
 import com.google.gson.Gson;
@@ -86,7 +85,6 @@ public class App extends Application implements Application.ActivityLifecycleCal
         super.onCreate();
         Notify.createChannel();
         Task.setSearchThreads(Setting.getSearchThreads());
-        ThemeManager.load(this);
         registerActivityLifecycleCallbacks(this);
     }
 
@@ -103,22 +101,15 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
         if (activity != activity()) this.activity = activity;
-        // 全局主题：配置集中在 ThemeManager，回到任意页面时实时套用并监听界面变化
-        ThemeManager.apply(activity);
-        ThemeManager.watch(activity);
     }
 
     @Override
     public void onActivityPaused(@NonNull Activity activity) {
         if (activity == activity()) this.activity = null;
-        ThemeManager.unwatch(activity);
     }
 
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
-        // 页面初始化阶段就套用：首帧不再是旧颜色
-        if (activity.getWindow() == null) return;
-        activity.getWindow().getDecorView().post(() -> ThemeManager.apply(activity));
     }
 
     @Override

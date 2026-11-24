@@ -37,13 +37,10 @@ import com.fongmi.android.tv.ui.dialog.LiveDialog;
 import com.fongmi.android.tv.ui.dialog.RestoreDialog;
 import com.fongmi.android.tv.ui.dialog.WebDavDialog;
 import com.fongmi.android.tv.ui.dialog.SiteDialog;
-import com.fongmi.android.tv.ui.dialog.ThemeDialog;
-import com.fongmi.android.tv.ui.dialog.ThemeStyleDialog;
 import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.PermissionUtil;
 import com.fongmi.android.tv.utils.ResUtil;
-import com.fongmi.android.tv.utils.Theme;
 import com.github.catvod.bean.Doh;
 import com.github.catvod.net.OkHttp;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -55,7 +52,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingFragment extends BaseFragment implements ConfigListener, SiteListener, LiveListener, ThemeDialog.Listener {
+public class SettingFragment extends BaseFragment implements ConfigListener, SiteListener, LiveListener {
 
     private FragmentSettingBinding mBinding;
     private String[] size;
@@ -66,12 +63,6 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
 
     private String getSwitch(boolean value) {
         return getString(value ? R.string.setting_on : R.string.setting_off);
-    }
-
-    private String getThemeText() {
-        int color = Setting.getThemeColor();
-        if (color == -1) return getString(R.string.setting_off);
-        return getString(color == 0 ? R.string.setting_auto : R.string.setting_custom);
     }
 
     private int getDohIndex() {
@@ -105,12 +96,10 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
     }
 
     private void setOtherText() {
-        mBinding.themeColorText.setText(getThemeText());
         mBinding.dohText.setText(getDohList()[getDohIndex()]);
         mBinding.incognitoText.setText(getSwitch(Setting.isIncognito()));
         mBinding.liveBootText.setText(getSwitch(LiveSetting.isBootGlobal()));
         mBinding.smartCategoryText.setText(getSwitch(Setting.isSmartCategory()));
-        mBinding.globalThemeText.setText(getSwitch(Theme.isEnabled(requireContext())));
         mBinding.sizeText.setText((size = ResUtil.getStringArray(R.array.select_size))[PlayerSetting.getSize()]);
     }
 
@@ -146,9 +135,7 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
         mBinding.incognito.setOnClickListener(this::setIncognito);
         mBinding.liveBoot.setOnClickListener(this::setLiveBoot);
         mBinding.smartCategory.setOnClickListener(this::setSmartCategory);
-        mBinding.globalTheme.setOnClickListener(this::onGlobalTheme);
         mBinding.vodHistory.setOnClickListener(this::onVodHistory);
-        mBinding.themeColor.setOnClickListener(this::onThemeColor);
         mBinding.liveHistory.setOnClickListener(this::onLiveHistory);
         mBinding.wallDefault.setOnClickListener(this::setWallDefault);
         mBinding.wallRefresh.setOnClickListener(this::setWallRefresh);
@@ -214,12 +201,6 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
         LiveConfig.get().setHome(item);
     }
 
-    @Override
-    public void setTheme(int color) {
-        Setting.putThemeColor(color);
-        RefreshEvent.theme();
-    }
-
     private void onVod(View view) {
         ConfigDialog.create().vod().show(this);
     }
@@ -275,10 +256,6 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
         getRoot().change(5);
     }
 
-    private void onThemeColor(View view) {
-        ThemeDialog.show(this);
-    }
-
     private void onVersion(View view) {
         Updater.create().force().start(requireActivity());
     }
@@ -314,17 +291,9 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
         mBinding.smartCategoryText.setText(getSwitch(Setting.isSmartCategory()));
     }
 
-    private void onGlobalTheme(View view) {
-        ThemeStyleDialog.show(this);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
-        if (mBinding == null) return;
-        // 主题可能在配置弹窗里被改动，回到本页时刷新开关文案并重新套用
-        mBinding.globalThemeText.setText(getSwitch(Theme.isEnabled(requireContext())));
-        Theme.apply(mBinding.getRoot());
     }
 
     private void setSize(View view) {

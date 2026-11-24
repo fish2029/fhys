@@ -19,8 +19,8 @@ import com.fongmi.android.tv.impl.SiteListener;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.SiteCategory;
-import com.fongmi.android.tv.utils.Theme;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,7 @@ public class SiteDialog extends BaseAlertDialog {
     private boolean change;
     private final List<Site> sites = new ArrayList<>();
     private final List<Site> shown = new ArrayList<>();
+    private final List<MaterialTextView> categoryViews = new ArrayList<>();
     private int category = -1;
 
     public static SiteDialog create() {
@@ -74,8 +75,6 @@ public class SiteDialog extends BaseAlertDialog {
 
     @Override
     protected void initView() {
-        // 站源弹窗保持上一版样式，不参与全局主题刷色
-        Theme.skip(binding.getRoot());
         collectSites();
         if (Setting.isSmartCategory()) {
             binding.categoryContainer.setVisibility(View.VISIBLE);
@@ -97,6 +96,7 @@ public class SiteDialog extends BaseAlertDialog {
     /** 第一排分类按钮：运行时按实际存在的分类动态添加 */
     private void buildCategories() {
         binding.categoryContainer.removeAllViews();
+        categoryViews.clear();
         for (int item : SiteCategory.categories(sites)) {
             AdapterCategoryBinding b = AdapterCategoryBinding.inflate(getLayoutInflater(), binding.categoryContainer, false);
             LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
@@ -106,8 +106,11 @@ public class SiteDialog extends BaseAlertDialog {
             b.text.setText(SiteCategory.getLabel(item));
             b.text.setTag(item);
             b.text.setSelected(item == category);
-            b.text.setOnClickListener(v -> selectCategory((Integer) v.getTag()));
+            b.text.setClickable(true);
+            b.text.setFocusable(true);
+            b.text.setOnClickListener(v -> selectCategory(item));
             binding.categoryContainer.addView(b.getRoot());
+            categoryViews.add(b.text);
         }
     }
 
@@ -127,10 +130,9 @@ public class SiteDialog extends BaseAlertDialog {
     /** 点击分类：高亮该按钮，并在下方容器里加载对应站点 */
     private void selectCategory(int target) {
         category = target;
-        for (int i = 0; i < binding.categoryContainer.getChildCount(); i++) {
-            View child = binding.categoryContainer.getChildAt(i);
-            Object tag = child.getTag();
-            child.setSelected(tag != null && (Integer) tag == target);
+        for (MaterialTextView view : categoryViews) {
+            Object tag = view.getTag();
+            view.setSelected(tag != null && (Integer) tag == target);
         }
         showSites(target == -1 ? new ArrayList<>() : SiteCategory.find(sites, target));
     }

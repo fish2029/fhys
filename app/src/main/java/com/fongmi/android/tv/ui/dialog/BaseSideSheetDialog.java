@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.viewbinding.ViewBinding;
 
-import com.fongmi.android.tv.utils.ThemeManager;
 import com.fongmi.android.tv.utils.Util;
 import com.google.android.material.sidesheet.SideSheetDialog;
 
@@ -44,8 +43,6 @@ public abstract class BaseSideSheetDialog extends AppCompatDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // 全局主题：侧边弹层与页面共用同一份配置
-        ThemeManager.apply(view);
         initView();
         initEvent();
     }
