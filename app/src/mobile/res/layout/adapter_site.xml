@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 站源按钮：背景/选中态与首页按钮同款玻璃胶囊，文字统一白色 -->
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <com.google.android.material.button.MaterialButton
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/text"
-        style="?attr/materialButtonOutlinedStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:background="@drawable/shape_item_glass"
         android:ellipsize="marquee"
+        android:gravity="center"
         android:singleLine="true"
-        android:textColor="@color/selector_site_text"
+        android:textColor="@color/white"
         android:textSize="14sp"
-        app:backgroundTint="@color/selector_button"
-        app:strokeColor="@color/selector_site_stroke"
-        tools:text="泥巴" />
+        tools:text="半日·APP" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="@color/white"
-        android:src="@drawable/ic_site_search" />
-
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/change"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:tint="@color/white"
-        android:src="@drawable/ic_site_change" />
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_site_change"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/search"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="10dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_site_search"
+        android:visibility="gone" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

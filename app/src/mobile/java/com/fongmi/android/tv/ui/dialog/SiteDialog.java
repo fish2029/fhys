@@ -17,6 +17,7 @@ import com.fongmi.android.tv.impl.SiteListener;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.SiteCategory;
+import com.fongmi.android.tv.utils.Theme;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -71,6 +72,8 @@ public class SiteDialog extends BaseAlertDialog {
 
     @Override
     protected void initView() {
+        // 站源弹窗保持上一版样式，不参与全局主题刷色
+        Theme.skip(binding.getRoot());
         collectSites();
         if (Setting.isSmartCategory()) {
             binding.categoryContainer.setVisibility(View.VISIBLE);

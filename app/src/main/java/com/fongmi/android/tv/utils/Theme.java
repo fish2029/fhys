@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.fongmi.android.tv.R;
 import com.github.catvod.utils.Prefers;
 
 /**
@@ -95,6 +96,11 @@ public class Theme {
         return states;
     }
 
+    /** 标记整棵视图树不参与全局主题（如站源弹窗） */
+    public static void skip(View view) {
+        if (view != null) view.setTag(R.id.theme_skip, Boolean.TRUE);
+    }
+
     /** 递归套用到整棵视图树（仅手机版生效） */
     public static void apply(View view) {
         if (view == null || !Util.isMobile() || !isEnabled(view.getContext())) return;
@@ -102,6 +108,8 @@ public class Theme {
     }
 
     private static void apply(View view, Context context) {
+        // 打了 theme_skip 标记的视图树整体跳过（站源弹窗保持上一版样式）
+        if (Boolean.TRUE.equals(view.getTag(R.id.theme_skip))) return;
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
             for (int i = 0; i < group.getChildCount(); i++) {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 给视图树打这个标记后，全局主题会整棵跳过 -->
+    <item name="theme_skip" type="id" />
+</resources>
