@@ -3,9 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/text"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/shape_item_glass"
+    android:layout_height="36dp"
+    android:background="@drawable/shape_flag_capsule"
+    android:ellipsize="end"
     android:gravity="center"
+    android:minWidth="72dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:singleLine="true"
     android:textColor="@color/selector_control_glass"
     android:textSize="14sp"
-    tools:text="泥巴" />
+    tools:text="优酷" />

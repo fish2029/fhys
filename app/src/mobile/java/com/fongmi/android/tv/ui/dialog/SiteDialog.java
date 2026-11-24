@@ -79,16 +79,9 @@ public class SiteDialog extends BaseAlertDialog implements SiteAdapter.OnClickLi
             }
         });
 
-        int selectedIndex = -1;
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            if (adapter.getItems().get(i).isSelected()) {
-                selectedIndex = i;
-                break;
-            }
-        }
+        int selectedIndex = adapter.getSelectedPosition();
         if (selectedIndex != -1) {
-            int finalSelectedIndex = selectedIndex;
-            binding.recycler.post(() -> binding.recycler.scrollToPosition(finalSelectedIndex));
+            binding.recycler.post(() -> binding.recycler.scrollToPosition(selectedIndex));
         }
     }
 

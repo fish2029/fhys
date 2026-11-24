@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 选集按钮：胶囊样式（圆角 = 高度一半），与线路按钮互不影响 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <ripple android:color="#40A855F7">
+            <item>
+                <layer-list>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="20dp" />
+                            <solid android:color="#668B5CF6" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="20dp" />
+                            <gradient
+                                android:angle="270"
+                                android:startColor="#E68F6BF0"
+                                android:endColor="#E66D28D9" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="20dp" />
+                            <stroke
+                                android:width="2dp"
+                                android:color="#E6E0D4FF" />
+                        </shape>
+                    </item>
+                </layer-list>
+            </item>
+            <item android:id="@android:id/mask">
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <solid android:color="@color/white" />
+                </shape>
+            </item>
+        </ripple>
+    </item>
+    <item>
+        <ripple android:color="#40A855F7">
+            <item>
+                <layer-list>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="20dp" />
+                            <solid android:color="#338B5CF6" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="20dp" />
+                            <gradient
+                                android:angle="270"
+                                android:startColor="#E6A78BFA"
+                                android:endColor="#E67C3AED" />
+                        </shape>
+                    </item>
+                </layer-list>
+            </item>
+            <item android:id="@android:id/mask">
+                <shape android:shape="rectangle">
+                    <corners android:radius="20dp" />
+                    <solid android:color="@color/white" />
+                </shape>
+            </item>
+        </ripple>
+    </item>
+</selector>

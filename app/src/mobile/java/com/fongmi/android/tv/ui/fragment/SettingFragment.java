@@ -107,6 +107,7 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
         mBinding.dohText.setText(getDohList()[getDohIndex()]);
         mBinding.incognitoText.setText(getSwitch(Setting.isIncognito()));
         mBinding.liveBootText.setText(getSwitch(LiveSetting.isBootGlobal()));
+        mBinding.smartCategoryText.setText(getSwitch(Setting.isSmartCategory()));
         mBinding.sizeText.setText((size = ResUtil.getStringArray(R.array.select_size))[PlayerSetting.getSize()]);
     }
 
@@ -141,6 +142,7 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
         mBinding.wall.setOnLongClickListener(this::onWallEdit);
         mBinding.incognito.setOnClickListener(this::setIncognito);
         mBinding.liveBoot.setOnClickListener(this::setLiveBoot);
+        mBinding.smartCategory.setOnClickListener(this::setSmartCategory);
         mBinding.vodHistory.setOnClickListener(this::onVodHistory);
         mBinding.themeColor.setOnClickListener(this::onThemeColor);
         mBinding.liveHistory.setOnClickListener(this::onLiveHistory);
@@ -301,6 +303,11 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
     private void setLiveBoot(View view) {
         LiveSetting.putBootGlobal(!LiveSetting.isBootGlobal());
         mBinding.liveBootText.setText(getSwitch(LiveSetting.isBootGlobal()));
+    }
+
+    private void setSmartCategory(View view) {
+        Setting.putSmartCategory(!Setting.isSmartCategory());
+        mBinding.smartCategoryText.setText(getSwitch(Setting.isSmartCategory()));
     }
 
     private void setSize(View view) {

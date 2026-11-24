@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 线路按钮：大小一致（固定高度 36dp + 最小宽度），文字居中，胶囊样式 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <ripple android:color="#40A855F7">
+            <item>
+                <layer-list>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="18dp" />
+                            <solid android:color="#668B5CF6" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="18dp" />
+                            <gradient
+                                android:angle="270"
+                                android:startColor="#E68F6BF0"
+                                android:endColor="#E66D28D9" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="18dp" />
+                            <stroke
+                                android:width="2dp"
+                                android:color="#E6E0D4FF" />
+                        </shape>
+                    </item>
+                </layer-list>
+            </item>
+            <item android:id="@android:id/mask">
+                <shape android:shape="rectangle">
+                    <corners android:radius="18dp" />
+                    <solid android:color="@color/white" />
+                </shape>
+            </item>
+        </ripple>
+    </item>
+    <item>
+        <ripple android:color="#33A855F7">
+            <item>
+                <layer-list>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="18dp" />
+                            <solid android:color="#338B5CF6" />
+                        </shape>
+                    </item>
+                    <item>
+                        <shape android:shape="rectangle">
+                            <corners android:radius="18dp" />
+                            <gradient
+                                android:angle="270"
+                                android:startColor="#E6A78BFA"
+                                android:endColor="#E67C3AED" />
+                        </shape>
+                    </item>
+                    <item
+                        android:bottom="18dp"
+                        android:left="10dp"
+                        android:right="10dp"
+                        android:top="2dp">
+                        <shape android:shape="rectangle">
+                            <corners
+                                android:topLeftRadius="14dp"
+                                android:topRightRadius="14dp" />
+                            <gradient
+                                android:angle="270"
+                                android:startColor="#59FFFFFF"
+                                android:endColor="#00FFFFFF" />
+                        </shape>
+                    </item>
+                </layer-list>
+            </item>
+            <item android:id="@android:id/mask">
+                <shape android:shape="rectangle">
+                    <corners android:radius="18dp" />
+                    <solid android:color="@color/white" />
+                </shape>
+            </item>
+        </ripple>
+    </item>
+</selector>

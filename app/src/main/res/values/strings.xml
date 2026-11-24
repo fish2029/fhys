@@ -133,6 +133,11 @@
     <string name="setting_player">Player setting</string>
     <string name="setting_danmaku">Danmaku setting</string>
     <string name="setting_incognito">Incognito mode</string>
+    <string name="setting_smart_category">Smart category</string>
+    <string name="site_category_jar">JAR sites</string>
+    <string name="site_category_py">PY sites</string>
+    <string name="site_category_music">Music</string>
+    <string name="site_category_drama">Short drama</string>
     <string name="setting_live_preview">Live preview</string>
     <string name="setting_live_boot">Boot to Live</string>
     <string name="setting_theme_color">Theme color</string>

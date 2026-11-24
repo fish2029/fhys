@@ -98,6 +98,14 @@ public class Setting {
         Prefers.put("incognito", incognito);
     }
 
+    public static boolean isSmartCategory() {
+        return Prefers.getBoolean("smart_category");
+    }
+
+    public static void putSmartCategory(boolean smartCategory) {
+        Prefers.put("smart_category", smartCategory);
+    }
+
     public static boolean isHistory() {
         return Prefers.getBoolean("history", true);
     }

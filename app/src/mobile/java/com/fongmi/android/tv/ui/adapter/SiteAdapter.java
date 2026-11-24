@@ -11,14 +11,21 @@ import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.bean.Site;
 import com.fongmi.android.tv.databinding.AdapterSiteBinding;
+import com.fongmi.android.tv.databinding.AdapterSiteGroupBinding;
+import com.fongmi.android.tv.setting.Setting;
+import com.fongmi.android.tv.utils.Pinyin;
+import com.fongmi.android.tv.utils.SiteCategory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SiteAdapter extends RecyclerView.Adapter<SiteAdapter.ViewHolder> {
+public class SiteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_SITE = 1;
 
     private final OnClickListener listener;
-    private final List<Site> mItems;
+    private final List<Object> mItems;
     private boolean search;
     private boolean change;
 
@@ -52,27 +59,56 @@ public class SiteAdapter extends RecyclerView.Adapter<SiteAdapter.ViewHolder> {
     }
 
     private void addAll() {
-        for (Site site : VodConfig.get().getSites()) if (!site.isHide()) mItems.add(site);
+        List<Site> sites = getVisibleSites();
+        mItems.clear();
+        if (Setting.isSmartCategory()) {
+            mItems.addAll(SiteCategory.group(sites));
+        } else {
+            mItems.addAll(sites);
+        }
+    }
+
+    private List<Site> getVisibleSites() {
+        List<Site> sites = new ArrayList<>();
+        for (Site site : VodConfig.get().getSites()) if (!site.isHide()) sites.add(site);
+        return sites;
     }
 
     public void filter(String query) {
-        mItems.clear();
+        List<Site> sites = new ArrayList<>();
         if (query.isEmpty()) {
-            addAll();
+            sites.addAll(getVisibleSites());
         } else {
             for (Site site : VodConfig.get().getSites()) {
                 if (site.isHide()) continue;
                 if (site.getName().toLowerCase().contains(query.toLowerCase())
-                        || com.fongmi.android.tv.utils.Pinyin.getInitials(site.getName()).contains(query.toLowerCase())) {
-                    mItems.add(site);
+                        || Pinyin.getInitials(site.getName()).contains(query.toLowerCase())) {
+                    sites.add(site);
                 }
             }
+        }
+        mItems.clear();
+        if (Setting.isSmartCategory()) {
+            mItems.addAll(SiteCategory.group(sites));
+        } else {
+            mItems.addAll(sites);
         }
         notifyDataSetChanged();
     }
 
+    /** 当前列表里的全部站点（不含分类标题） */
     public List<Site> getItems() {
-        return mItems;
+        List<Site> result = new ArrayList<>();
+        for (Object item : mItems) if (item instanceof Site) result.add((Site) item);
+        return result;
+    }
+
+    /** 当前选中站在列表中的位置（含分类标题偏移），没有则 -1 */
+    public int getSelectedPosition() {
+        for (int i = 0; i < mItems.size(); i++) {
+            if (mItems.get(i) instanceof Site && ((Site) mItems.get(i)).isSelected()) return i;
+        }
+        return -1;
     }
 
     @Override
@@ -80,29 +116,55 @@ public class SiteAdapter extends RecyclerView.Adapter<SiteAdapter.ViewHolder> {
         return mItems.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return mItems.get(position) instanceof Site ? TYPE_SITE : TYPE_HEADER;
+    }
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(AdapterSiteBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER) {
+            return new HeaderHolder(AdapterSiteGroupBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        }
+        return new SiteHolder(AdapterSiteBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Site item = mItems.get(position);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == TYPE_HEADER) {
+            ((HeaderHolder) holder).binding.text.setText(getCategoryName((Integer) mItems.get(position)));
+            return;
+        }
+        Site item = (Site) mItems.get(position);
+        SiteHolder siteHolder = (SiteHolder) holder;
         boolean on = !search || change;
-        holder.binding.text.setText(item.getName());
-        holder.binding.text.setEnabled(on);
-        holder.binding.text.setFocusable(on);
-        holder.binding.text.setSelected(on && item.isSelected());
-        holder.binding.search.setImageResource(getSearchIcon(item));
-        holder.binding.change.setImageResource(getChangeIcon(item));
-        holder.binding.search.setVisibility(search ? View.VISIBLE : View.GONE);
-        holder.binding.change.setVisibility(change ? View.VISIBLE : View.GONE);
-        holder.binding.text.setOnClickListener(v -> listener.onTextClick(item));
-        holder.binding.search.setOnClickListener(v -> listener.onSearchClick(position, item));
-        holder.binding.change.setOnClickListener(v -> listener.onChangeClick(position, item));
-        holder.binding.search.setOnLongClickListener(v -> listener.onSearchLongClick(item));
-        holder.binding.change.setOnLongClickListener(v -> listener.onChangeLongClick(item));
+        siteHolder.binding.text.setText(item.getName());
+        siteHolder.binding.text.setEnabled(on);
+        siteHolder.binding.text.setFocusable(on);
+        siteHolder.binding.text.setSelected(on && item.isSelected());
+        siteHolder.binding.search.setImageResource(getSearchIcon(item));
+        siteHolder.binding.change.setImageResource(getChangeIcon(item));
+        siteHolder.binding.search.setVisibility(search ? View.VISIBLE : View.GONE);
+        siteHolder.binding.change.setVisibility(change ? View.VISIBLE : View.GONE);
+        siteHolder.binding.text.setOnClickListener(v -> listener.onTextClick(item));
+        siteHolder.binding.search.setOnClickListener(v -> listener.onSearchClick(position, item));
+        siteHolder.binding.change.setOnClickListener(v -> listener.onChangeClick(position, item));
+        siteHolder.binding.search.setOnLongClickListener(v -> listener.onSearchLongClick(item));
+        siteHolder.binding.change.setOnLongClickListener(v -> listener.onChangeLongClick(item));
+    }
+
+    private int getCategoryName(int category) {
+        switch (category) {
+            case SiteCategory.PY:
+                return R.string.site_category_py;
+            case SiteCategory.MUSIC:
+                return R.string.site_category_music;
+            case SiteCategory.DRAMA:
+                return R.string.site_category_drama;
+            default:
+                return R.string.site_category_jar;
+        }
     }
 
     private int getSearchIcon(Site item) {
@@ -113,11 +175,21 @@ public class SiteAdapter extends RecyclerView.Adapter<SiteAdapter.ViewHolder> {
         return item.isChangeable() ? R.drawable.ic_site_change : R.drawable.ic_site_block;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class HeaderHolder extends RecyclerView.ViewHolder {
+
+        private final AdapterSiteGroupBinding binding;
+
+        HeaderHolder(@NonNull AdapterSiteGroupBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
+
+    public class SiteHolder extends RecyclerView.ViewHolder {
 
         private final AdapterSiteBinding binding;
 
-        ViewHolder(@NonNull AdapterSiteBinding binding) {
+        SiteHolder(@NonNull AdapterSiteBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

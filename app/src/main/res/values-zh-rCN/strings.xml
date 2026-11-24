@@ -131,6 +131,11 @@
     <string name="setting_player">播放设置</string>
     <string name="setting_danmaku">弹幕设置</string>
     <string name="setting_incognito">无痕模式</string>
+    <string name="setting_smart_category">智能分类</string>
+    <string name="site_category_jar">JAR内站点</string>
+    <string name="site_category_py">PY站点</string>
+    <string name="site_category_music">音乐</string>
+    <string name="site_category_drama">短剧</string>
     <string name="setting_live_preview">首页直播预览</string>
     <string name="setting_live_boot">开机直接进入直播</string>
     <string name="setting_theme_color">主题色彩</string>
