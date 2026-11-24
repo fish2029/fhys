@@ -15,6 +15,7 @@ import androidx.core.os.HandlerCompat;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.Task;
+import com.fongmi.android.tv.utils.Theme;
 import com.fongmi.hook.Hook;
 import com.github.catvod.Init;
 import com.google.gson.Gson;
@@ -101,6 +102,10 @@ public class App extends Application implements Application.ActivityLifecycleCal
     @Override
     public void onActivityResumed(@NonNull Activity activity) {
         if (activity != activity()) this.activity = activity;
+        // 全局主题：回到任意页面时实时套用
+        if (activity.getWindow() != null && activity.getWindow().peekDecorView() != null) {
+            Theme.apply(activity.getWindow().getDecorView());
+        }
     }
 
     @Override

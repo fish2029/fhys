@@ -139,6 +139,15 @@
     <string name="setting_live_preview">首页直播预览</string>
     <string name="setting_live_boot">开机直接进入直播</string>
     <string name="setting_theme_color">主题色彩</string>
+    <string name="setting_global_theme">全局主题</string>
+    <string name="theme_enable">启用全局主题</string>
+    <string name="theme_text_color">文字颜色</string>
+    <string name="theme_button_color">按钮颜色</string>
+    <string name="theme_pressed_color">点击态颜色</string>
+    <string name="theme_radius">圆角大小</string>
+    <string name="theme_preview">预览</string>
+    <string name="theme_reset">恢复默认</string>
+    <string name="theme_done">完成</string>
     <string name="setting_home">首页设置</string>
     <string name="setting_home_menu">首页功能</string>
     <string name="setting_home_history">显示继续观看</string>

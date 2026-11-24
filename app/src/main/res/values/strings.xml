@@ -141,6 +141,15 @@
     <string name="setting_live_preview">Live preview</string>
     <string name="setting_live_boot">Boot to Live</string>
     <string name="setting_theme_color">Theme color</string>
+    <string name="setting_global_theme">Global theme</string>
+    <string name="theme_enable">Enable global theme</string>
+    <string name="theme_text_color">Text color</string>
+    <string name="theme_button_color">Button color</string>
+    <string name="theme_pressed_color">Pressed color</string>
+    <string name="theme_radius">Corner radius</string>
+    <string name="theme_preview">Preview</string>
+    <string name="theme_reset">Reset default</string>
+    <string name="theme_done">Done</string>
     <string name="setting_home">Home Setting</string>
     <string name="setting_home_menu">Home Navigation</string>
     <string name="setting_home_history">Keep Watching</string>

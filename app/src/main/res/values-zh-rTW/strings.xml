@@ -137,6 +137,15 @@
     <string name="site_category_music">音樂</string>
     <string name="site_category_drama">短劇</string>
     <string name="setting_theme_color">主題色彩</string>
+    <string name="setting_global_theme">全域主題</string>
+    <string name="theme_enable">啟用全域主題</string>
+    <string name="theme_text_color">文字顏色</string>
+    <string name="theme_button_color">按鈕顏色</string>
+    <string name="theme_pressed_color">點擊態顏色</string>
+    <string name="theme_radius">圓角大小</string>
+    <string name="theme_preview">預覽</string>
+    <string name="theme_reset">恢復預設</string>
+    <string name="theme_done">完成</string>
     <string name="setting_home">首頁設定</string>
     <string name="setting_home_menu">首頁功能</string>
     <string name="setting_home_history">顯示繼續觀看</string>

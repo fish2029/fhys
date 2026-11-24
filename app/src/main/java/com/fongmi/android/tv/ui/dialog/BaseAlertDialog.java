@@ -10,6 +10,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.viewbinding.ViewBinding;
 
 import com.fongmi.android.tv.utils.ResUtil;
+import com.fongmi.android.tv.utils.Theme;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public abstract class BaseAlertDialog extends DialogFragment {
@@ -24,6 +25,10 @@ public abstract class BaseAlertDialog extends DialogFragment {
         Dialog dialog = getBuilder().create();
         initView();
         initEvent();
+        // 全局主题：弹窗内容也实时套用
+        if (getBinding() != null && getBinding().getRoot() != null) {
+            Theme.apply(getBinding().getRoot());
+        }
         return dialog;
     }
 
