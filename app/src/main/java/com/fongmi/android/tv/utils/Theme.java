@@ -237,8 +237,8 @@ public class Theme {
         // 悬浮球：底色 + 描边 + 图标色一并接管（首页右下角三个）
         if (view instanceof FloatingActionButton) {
             FloatingActionButton fab = (FloatingActionButton) view;
+            // 注：本工程解析到的 Material 版本没有 setStrokeColor，只接管底色和图标色
             fab.setBackgroundTintList(ColorStateList.valueOf(getButtonColor(context)));
-            fab.setStrokeColor(getPressedColor(context));
             fab.setImageTintList(ColorStateList.valueOf(text));
             return;
         }
