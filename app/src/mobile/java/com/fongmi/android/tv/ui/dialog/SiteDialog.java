@@ -1,7 +1,9 @@
 package com.fongmi.android.tv.ui.dialog;
 
 import android.os.Build;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
@@ -211,14 +213,17 @@ public class SiteDialog extends BaseAlertDialog {
     @Override
     public void onStart() {
         super.onStart();
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                getDialog().getWindow().setBackgroundBlurRadius(80);
-            }
+        if (getDialog() == null || getDialog().getWindow() == null) return;
+        getDialog().getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            getDialog().getWindow().setBackgroundBlurRadius(80);
         }
+        // 高度按比例固定在窗口上（列表区域用 weight 吃满），保证是居中的浮层而不是撑满屏
         int maxHeight = Math.round(requireContext().getResources().getDisplayMetrics().heightPixels * MAX_HEIGHT_RATIO);
-        binding.siteScroll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, maxHeight));
+        WindowManager.LayoutParams params = getDialog().getWindow().getAttributes();
+        params.height = maxHeight;
+        params.gravity = Gravity.CENTER;
+        getDialog().getWindow().setAttributes(params);
         if (sites.isEmpty()) dismiss();
         else if (ResUtil.isLand(requireContext())) setWidth(0.5f);
     }

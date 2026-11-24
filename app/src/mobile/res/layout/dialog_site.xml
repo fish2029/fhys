@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 手机版站源界面：顶部动态分类按钮一排，下面垂直 LinearLayout 依次排列站点 -->
+<!-- 手机版站源界面：顶部动态分类按钮一排，下面垂直 LinearLayout 依次排列站点。
+     高度由代码按屏高比例固定在窗口上（居中浮层），列表区域用 weight 占满剩余空间 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,11 +19,12 @@
         android:layout_marginBottom="8dp"
         android:orientation="horizontal" />
 
-    <!-- 第二块：站点列表，垂直往下排 -->
+    <!-- 第二块：站点列表，垂直往下排；高度吃满分类行以下的部分 -->
     <ScrollView
         android:id="@+id/siteScroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:overScrollMode="never"
         android:scrollbars="none">
 
