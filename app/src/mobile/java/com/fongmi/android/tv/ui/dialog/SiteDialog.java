@@ -20,7 +20,6 @@ import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.utils.ResUtil;
 import com.fongmi.android.tv.utils.SiteCategory;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class SiteDialog extends BaseAlertDialog {
     private boolean change;
     private final List<Site> sites = new ArrayList<>();
     private final List<Site> shown = new ArrayList<>();
-    private final List<MaterialTextView> categoryViews = new ArrayList<>();
+    private final List<View> categoryViews = new ArrayList<>();
     private int category = -1;
 
     public static SiteDialog create() {
@@ -130,7 +129,7 @@ public class SiteDialog extends BaseAlertDialog {
     /** 点击分类：高亮该按钮，并在下方容器里加载对应站点 */
     private void selectCategory(int target) {
         category = target;
-        for (MaterialTextView view : categoryViews) {
+        for (View view : categoryViews) {
             Object tag = view.getTag();
             view.setSelected(tag != null && (Integer) tag == target);
         }
