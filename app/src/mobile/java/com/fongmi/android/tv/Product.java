@@ -14,6 +14,11 @@ public class Product {
         return 1;
     }
 
+    /** 手机版内置配置源：首次启动（本地还没有任何配置时）自动载入 */
+    public static String getVodUrl() {
+        return "https://cnb.cool/MyTest2026/tvbox/-/git/raw/main/tvbox.json";
+    }
+
     public static int getColumn(Context context) {
         int count = ResUtil.isLand(context) ? 7 : 5;
         count = count + (ResUtil.isPad() ? 1 : 0);

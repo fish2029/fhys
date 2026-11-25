@@ -10,6 +10,11 @@ public class Product {
         return 0;
     }
 
+    /** 电视版不内置配置源，与原有行为一致 */
+    public static String getVodUrl() {
+        return "";
+    }
+
     public static int getColumn() {
         return Math.abs(PlayerSetting.getSize() - 8);
     }

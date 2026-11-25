@@ -95,8 +95,10 @@ public class Config {
 
     public static Config vod() {
         Config item = AppDatabase.get().getConfigDao().findOne(0);
-        // 已移除内置仓库地址，不再预置默认配置源；用户需在应用内自行添加仓库。
-        return item == null ? create(0) : item;
+        if (item != null) return item;
+        // 手机版内置默认配置源（Product#getVodUrl）：仅本地还没有任何配置时载入，老用户已有配置不受影响；电视版返回空，维持原行为
+        String url = Product.getVodUrl();
+        return TextUtils.isEmpty(url) ? create(0) : create(0, url);
     }
 
     public static Config live() {
