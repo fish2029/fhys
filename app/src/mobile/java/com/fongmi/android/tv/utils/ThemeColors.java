@@ -328,7 +328,7 @@ public abstract class ThemeColors {
         btn.setBackgroundTintList(new android.content.res.ColorStateList(new int[][]{{android.R.attr.state_selected}, {}}, new int[]{selTint, Color.TRANSPARENT}));
         btn.setStrokeColor(new android.content.res.ColorStateList(new int[][]{{android.R.attr.state_selected}, {}}, new int[]{0xFF000000 | (a.base & 0xFFFFFF), outlineColor(ctx)}));
         btn.setTextColor(new android.content.res.ColorStateList(new int[][]{{android.R.attr.state_selected}, {}}, new int[]{0xFF000000 | (a.light & 0xFFFFFF), getTextColor()}));
-        btn.setCornerRadius(shapeRadius(ctx, btn.getCornerRadius()));
+        btn.setCornerRadius((int) shapeRadius(ctx, btn.getCornerRadius()));
     }
 
     /** 未选中态描边：取主题 colorOutline，取不到回落中灰 */
