@@ -1,15 +1,12 @@
 package com.fongmi.android.tv.utils;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -298,44 +295,6 @@ public abstract class ThemeColors {
         }
     }
 
-    /** 界面元素从 XML 创建时调用：出生即套用主题（按钮胶囊/页面底色/文字颜色） */
-    public static void onViewCreated(View view, Context ctx, AttributeSet attrs) {
-        if (attrs == null) return;
-        TypedArray bg = ctx.obtainStyledAttributes(attrs, new int[]{android.R.attr.background});
-        if (bg.hasValue(0)) {
-            int res = bg.getResourceId(0, 0);
-            bg.recycle();
-            applyBackgroundById(view, ctx, res);
-        } else {
-            bg.recycle();
-        }
-        TypedArray tc = ctx.obtainStyledAttributes(attrs, new int[]{android.R.attr.textColor});
-        if (tc.hasValue(0)) {
-            android.content.res.ColorStateList csl = tc.getColorStateList(0);
-            tc.recycle();
-            if (csl != null && csl.getDefaultColor() == Color.WHITE && view instanceof TextView) ((TextView) view).setTextColor(getTextColor());
-        } else {
-            tc.recycle();
-        }
-    }
-
-    /** 按资源 ID 套背景：胶囊换强调色样式，页面底换背景色 */
-    private static void applyBackgroundById(View view, Context ctx, int res) {
-        if (res == 0) return;
-        if (res == R.drawable.bg_page) {
-            view.setTag(R.id.theme_pill_res, res);
-            view.setBackground("default".equals(getBgKey()) ? ContextCompat.getDrawable(ctx, res) : new ColorDrawable(getBgColor()));
-            return;
-        }
-        for (int pill : PILL_DRAWABLES) {
-            if (pill == res) {
-                view.setBackground(pillFor(ctx, res, getAccent()));
-                view.setTag(R.id.theme_pill_res, res);
-                return;
-            }
-        }
-    }
-
     private static void applyRecursive(View view, Accent a, int text, Context ctx) {
         Integer res = null;
         Object tagged = view.getTag(R.id.theme_pill_res);
@@ -346,11 +305,7 @@ public abstract class ThemeColors {
             if (bg != null && bg.getConstantState() != null) res = ORIG_STATES.get(bg.getConstantState());
         }
         if (res != null) {
-            if (res == R.drawable.bg_page) {
-                view.setBackground("default".equals(getBgKey()) ? ContextCompat.getDrawable(ctx, res) : new ColorDrawable(getBgColor()));
-            } else {
-                view.setBackground(pillFor(ctx, res, a));
-            }
+            view.setBackground(pillFor(ctx, res, a));
             view.setTag(R.id.theme_pill_res, res);
         }
         if (view instanceof TextView) {
