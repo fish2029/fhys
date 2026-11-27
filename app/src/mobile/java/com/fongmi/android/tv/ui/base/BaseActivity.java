@@ -19,7 +19,6 @@ import androidx.viewbinding.ViewBinding;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.ui.custom.CustomWallView;
 import com.fongmi.android.tv.utils.ResUtil;
-import com.fongmi.android.tv.utils.ThemeColors;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
 
@@ -37,7 +36,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         enableDynamicColor();
         super.onCreate(savedInstanceState);
         setContentView(getBinding().getRoot());
-        ThemeColors.apply(getWindow().getDecorView());
         EventBus.getDefault().register(this);
         initView(savedInstanceState);
         setBackCallback();
