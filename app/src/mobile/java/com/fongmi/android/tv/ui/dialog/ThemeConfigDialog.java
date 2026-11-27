@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 全局主题配置弹窗：强调色 / 全局文字颜色 / 全局背景颜色 三块色板。
+ * 全局主题配置弹窗：强调色 / 全局文字颜色 / 全局背景颜色 / 按钮样式 四块。
  * 与繁花TV 交互一致：色点选择器，点选即时生效并持久化。
  */
 public class ThemeConfigDialog {
@@ -42,6 +42,10 @@ public class ThemeConfigDialog {
         }));
         root.addView(section(ctx, "全局背景颜色", ThemeColors.BG_COLORS, ThemeColors.getBgKey(), key -> {
             ThemeColors.putBg(key);
+            ThemeColors.apply(activity.getWindow().getDecorView());
+        }));
+        root.addView(buttonSection(ctx, ThemeColors.getButtonKey(), key -> {
+            ThemeColors.putButton(key);
             ThemeColors.apply(activity.getWindow().getDecorView());
         }));
 
@@ -79,7 +83,7 @@ public class ThemeConfigDialog {
                     for (TextView other : dots) {
                         String otherKey = (String) other.getTag();
                         other.setBackground(dotBg(ctx, colors.get(otherKey), otherKey.equals(key)));
-                        other.setVisibility(otherKey.equals(key) ? View.VISIBLE : View.INVISIBLE);
+                        other.setText(otherKey.equals(key) ? "✓" : "");
                     }
                 });
                 dots.add(dot);
@@ -92,7 +96,7 @@ public class ThemeConfigDialog {
 
     private static TextView dot(Context ctx, int color, boolean selected) {
         TextView dot = new TextView(ctx);
-        dot.setText("✓");
+        dot.setText(selected ? "✓" : "");
         dot.setTextColor(Color.WHITE);
         dot.setGravity(Gravity.CENTER);
         dot.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
@@ -100,7 +104,6 @@ public class ThemeConfigDialog {
         lp.setMargins(dp(ctx, 4), dp(ctx, 4), dp(ctx, 4), dp(ctx, 4));
         dot.setLayoutParams(lp);
         dot.setBackground(dotBg(ctx, color, selected));
-        dot.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
         return dot;
     }
 
@@ -108,6 +111,52 @@ public class ThemeConfigDialog {
         GradientDrawable d = new GradientDrawable();
         d.setShape(GradientDrawable.OVAL);
         d.setColor(color);
+        if (selected) d.setStroke(dp(ctx, 2), Color.WHITE);
+        return d;
+    }
+
+    private static LinearLayout buttonSection(Context ctx, String selected, SelectListener listener) {
+        LinearLayout box = new LinearLayout(ctx);
+        box.setOrientation(LinearLayout.VERTICAL);
+
+        TextView label = new TextView(ctx);
+        label.setText("按钮样式 · " + ThemeColors.BUTTON_STYLES.get(selected));
+        label.setTextColor(Color.WHITE);
+        label.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        label.setPadding(0, dp(ctx, 12), 0, dp(ctx, 8));
+        box.addView(label);
+
+        LinearLayout row = new LinearLayout(ctx);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        List<TextView> chips = new ArrayList<>();
+        for (Map.Entry<String, String> e : ThemeColors.BUTTON_STYLES.entrySet()) {
+            TextView chip = new TextView(ctx);
+            chip.setText(e.getValue());
+            chip.setTextColor(Color.WHITE);
+            chip.setGravity(Gravity.CENTER);
+            chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            chip.setPadding(dp(ctx, 20), dp(ctx, 8), dp(ctx, 20), dp(ctx, 8));
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0, dp(ctx, 4), dp(ctx, 12), dp(ctx, 4));
+            chip.setLayoutParams(lp);
+            chip.setBackground(chipBg(ctx, e.getKey().equals(selected)));
+            chip.setTag(e.getKey());
+            chip.setOnClickListener(v -> {
+                listener.onSelect(e.getKey());
+                label.setText("按钮样式 · " + ThemeColors.BUTTON_STYLES.get(e.getKey()));
+                for (TextView other : chips) other.setBackground(chipBg(ctx, e.getKey().equals(other.getTag())));
+            });
+            chips.add(chip);
+            row.addView(chip);
+        }
+        box.addView(row);
+        return box;
+    }
+
+    private static GradientDrawable chipBg(Context ctx, boolean selected) {
+        GradientDrawable d = new GradientDrawable();
+        d.setCornerRadius(dp(ctx, 20));
+        d.setColor(selected ? 0x66FFFFFF : 0x33FFFFFF);
         if (selected) d.setStroke(dp(ctx, 2), Color.WHITE);
         return d;
     }
