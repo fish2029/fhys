@@ -2,10 +2,13 @@ package com.fongmi.android.tv.ui.base;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.DisplayCutout;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,6 +22,7 @@ import androidx.viewbinding.ViewBinding;
 import com.fongmi.android.tv.setting.Setting;
 import com.fongmi.android.tv.ui.custom.CustomWallView;
 import com.fongmi.android.tv.utils.ResUtil;
+import com.fongmi.android.tv.utils.ThemeColors;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
 
@@ -32,14 +36,33 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        installThemeFactory();
         enableEdgeToEdge();
         enableDynamicColor();
         super.onCreate(savedInstanceState);
         setContentView(getBinding().getRoot());
+        ThemeColors.apply(getWindow().getDecorView());
         EventBus.getDefault().register(this);
         initView(savedInstanceState);
         setBackCallback();
         initEvent();
+    }
+
+    /** 挂全局主题工厂：所有从 XML 创建的界面元素出生即带主题（含 Fragment、列表项、弹窗） */
+    private void installThemeFactory() {
+        getLayoutInflater().setFactory2(new LayoutInflater.Factory2() {
+            @Override
+            public View onCreateView(String name, Context context, AttributeSet attrs) {
+                return onCreateView(null, name, context, attrs);
+            }
+
+            @Override
+            public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+                View view = ((LayoutInflater.Factory2) getDelegate()).onCreateView(parent, name, context, attrs);
+                if (view != null) ThemeColors.onViewCreated(view, context, attrs);
+                return view;
+            }
+        });
     }
 
     @Override

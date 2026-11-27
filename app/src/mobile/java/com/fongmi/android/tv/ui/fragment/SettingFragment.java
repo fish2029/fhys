@@ -37,6 +37,7 @@ import com.fongmi.android.tv.ui.dialog.LiveDialog;
 import com.fongmi.android.tv.ui.dialog.RestoreDialog;
 import com.fongmi.android.tv.ui.dialog.WebDavDialog;
 import com.fongmi.android.tv.ui.dialog.SiteDialog;
+import com.fongmi.android.tv.ui.dialog.ThemeConfigDialog;
 import com.fongmi.android.tv.utils.FileUtil;
 import com.fongmi.android.tv.utils.Notify;
 import com.fongmi.android.tv.utils.PermissionUtil;
@@ -126,6 +127,7 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
         mBinding.home.setOnClickListener(this::onHome);
         mBinding.restore.setOnClickListener(this::onRestore);
         mBinding.sync.setOnClickListener(view -> onSync());
+        mBinding.themeConfig.setOnClickListener(this::onThemeConfig);
         mBinding.version.setOnClickListener(this::onVersion);
         mBinding.vod.setOnLongClickListener(this::onVodEdit);
         mBinding.vodHome.setOnClickListener(this::onVodHome);
@@ -258,6 +260,10 @@ public class SettingFragment extends BaseFragment implements ConfigListener, Sit
 
     private void onVersion(View view) {
         Updater.create().force().start(requireActivity());
+    }
+
+    private void onThemeConfig(View view) {
+        ThemeConfigDialog.show(getActivity());
     }
 
     private void setWallDefault(View view) {
