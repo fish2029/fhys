@@ -278,12 +278,22 @@ public abstract class ThemeColors {
 
     /** 按资源名重建对应结构的强调色胶囊（保持原圆角/形状/描边/高光） */
     private static Drawable pillFor(Context ctx, int res, Accent a) {
-        if (res == R.drawable.shape_item || res == R.drawable.shape_item_glass) return pill(ctx, a, dp(ctx, 28), true, true, true);
-        if (res == R.drawable.shape_accent) return pill(ctx, a, dp(ctx, 28), false, false, true);
-        if (res == R.drawable.shape_episode_capsule) return pill(ctx, a, dp(ctx, 20), true, true, false);
-        if (res == R.drawable.shape_search_bar_bg) return pill(ctx, a, dp(ctx, 18), false, false, false);
-        if (res == R.drawable.shape_control || res == R.drawable.shape_action_btn_bg) return pillOval(ctx, a, res == R.drawable.shape_control);
-        return pill(ctx, a, dp(ctx, 28), false, false, false);
+        switch (res) {
+            case R.drawable.shape_item:
+            case R.drawable.shape_item_glass:
+                return pill(ctx, a, dp(ctx, 28), true, true, true);
+            case R.drawable.shape_accent:
+                return pill(ctx, a, dp(ctx, 28), false, false, true);
+            case R.drawable.shape_episode_capsule:
+                return pill(ctx, a, dp(ctx, 20), true, true, false);
+            case R.drawable.shape_search_bar_bg:
+                return pill(ctx, a, dp(ctx, 18), false, false, false);
+            case R.drawable.shape_control:
+            case R.drawable.shape_action_btn_bg:
+                return pillOval(ctx, a, res == R.drawable.shape_control);
+            default:
+                return pill(ctx, a, dp(ctx, 28), false, false, false);
+        }
     }
 
     private static float dp(Context ctx, int v) {
@@ -295,25 +305,26 @@ public abstract class ThemeColors {
         GradientDrawable normal = rect(radius);
         normal.setColor(0x33000000 | (a.base & 0xFFFFFF));
         GradientDrawable normalGrad = rect(radius);
+        normalGrad.setGradientType(GradientDrawable.RECTANGLE);
         normalGrad.setColors(new int[]{0xE6000000 | (a.light & 0xFFFFFF), 0xE6000000 | (a.deep & 0xFFFFFF)});
-        normalGrad.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM);
+        normalGrad.setOrientation(GradientDrawable.Orientation.TB_GRADIENT);
         LayerDrawable normalLayers = gloss ? new LayerDrawable(new Drawable[]{normal, normalGrad, glossTop(radius)}) : new LayerDrawable(new Drawable[]{normal, normalGrad});
-        GradientDrawable selectedSolid = rect(radius);
-        selectedSolid.setColor(0x66000000 | (a.base & 0xFFFFFF));
         GradientDrawable selectedGrad = rect(radius);
         selectedGrad.setColors(new int[]{0xE6000000 | (a.light & 0xFFFFFF), 0xE6000000 | (a.deep & 0xFFFFFF)});
-        selectedGrad.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM);
-        Drawable selected;
+        selectedGrad.setOrientation(GradientDrawable.Orientation.TB_GRADIENT);
+        GradientDrawable selectedSolid = rect(radius);
+        selectedSolid.setColor(0x66000000 | (a.base & 0xFFFFFF));
         if (stroke) {
             GradientDrawable selectedStroke = rect(radius);
             selectedStroke.setStroke((int) dp(ctx, 2), 0xE6000000 | (a.light & 0xFFFFFF));
-            selected = new LayerDrawable(new Drawable[]{selectedSolid, selectedGrad, selectedStroke});
+            selectedGrad = new LayerDrawable(new Drawable[]{selectedSolid, selectedGrad, selectedStroke}) {
+            };
         } else {
-            selected = new LayerDrawable(new Drawable[]{selectedSolid, selectedGrad});
+            selectedGrad = new LayerDrawable(new Drawable[]{selectedSolid, selectedGrad});
         }
-        RippleDrawable normalRipple = new RippleDrawable(android.content.res.ColorStateList.valueOf(0x40000000 | (a.base & 0xFFFFFF)), normalLayers, rect(radius));
+        RippleDrawable normalRipple = new RippleDrawable(0x40000000 | (a.base & 0xFFFFFF), normalLayers, rect(radius));
         if (!selector) return normalRipple;
-        RippleDrawable selectedRipple = new RippleDrawable(android.content.res.ColorStateList.valueOf(0x40000000 | (a.base & 0xFFFFFF)), selected, rect(radius));
+        RippleDrawable selectedRipple = new RippleDrawable(0x40000000 | (a.base & 0xFFFFFF), selectedGrad, rect(radius));
         StateListDrawable states = new StateListDrawable();
         states.addState(new int[]{android.R.attr.state_selected}, selectedRipple);
         states.addState(new int[0], normalRipple);
@@ -326,9 +337,9 @@ public abstract class ThemeColors {
         solid.setColor(0x33000000 | (a.base & 0xFFFFFF));
         GradientDrawable grad = oval();
         grad.setColors(new int[]{0xE6000000 | (a.light & 0xFFFFFF), 0xE6000000 | (a.deep & 0xFFFFFF)});
-        grad.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM);
+        grad.setOrientation(GradientDrawable.Orientation.TB_GRADIENT);
         LayerDrawable layers = gloss ? new LayerDrawable(new Drawable[]{solid, grad, glossOval()}) : new LayerDrawable(new Drawable[]{solid, grad});
-        return new RippleDrawable(android.content.res.ColorStateList.valueOf(0x33000000 | (a.base & 0xFFFFFF)), layers, oval());
+        return new RippleDrawable(0x33000000 | (a.base & 0xFFFFFF), layers, oval());
     }
 
     private static GradientDrawable rect(float radius) {
@@ -350,7 +361,7 @@ public abstract class ThemeColors {
         d.setShape(GradientDrawable.RECTANGLE);
         d.setCornerRadii(new float[]{radius, radius, radius, radius, 0, 0, 0, 0});
         d.setColors(new int[]{0x59FFFFFF, 0x00FFFFFF});
-        d.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM);
+        d.setOrientation(GradientDrawable.Orientation.TB_GRADIENT);
         return d;
     }
 
@@ -358,7 +369,7 @@ public abstract class ThemeColors {
         GradientDrawable d = new GradientDrawable();
         d.setShape(GradientDrawable.OVAL);
         d.setColors(new int[]{0x59FFFFFF, 0x00FFFFFF});
-        d.setOrientation(GradientDrawable.Orientation.TOP_BOTTOM);
+        d.setOrientation(GradientDrawable.Orientation.TB_GRADIENT);
         return d;
     }
 }
