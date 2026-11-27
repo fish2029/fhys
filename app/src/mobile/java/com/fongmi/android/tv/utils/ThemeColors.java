@@ -16,11 +16,11 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.fongmi.android.tv.R;
+import com.fongmi.android.tv.ui.custom.CustomWallView;
 import com.github.catvod.utils.Prefers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * 全局主题配置：强调色 / 全局文字颜色 / 全局背景颜色
@@ -262,9 +262,6 @@ public abstract class ThemeColors {
     /** 原始资源 ConstantState → 资源 ID，首次应用时构建 */
     private static Map<Object, Integer> ORIG_STATES;
 
-    /** 已应用胶囊的 ConstantState → 资源 ID，支持反复换色时识别旧胶囊 */
-    private static final Map<Object, Integer> APPLIED = new WeakHashMap<>();
-
     private static int sLastText = Color.WHITE;
     private static int sLastTint = Color.WHITE;
 
@@ -274,6 +271,7 @@ public abstract class ThemeColors {
         Accent a = getAccent();
         int text = getTextColor();
         root.setBackgroundColor(getBgColor());
+        applyWall(root, !"default".equals(getBgKey()));
         if (ORIG_STATES == null) {
             ORIG_STATES = new LinkedHashMap<>();
             for (int res : PILL_DRAWABLES) {
@@ -286,16 +284,29 @@ public abstract class ThemeColors {
         sLastTint = text;
     }
 
+    /** 选了背景色时收起自带壁纸，选回默认纯黑时恢复 */
+    private static void applyWall(View root, boolean showWall) {
+        if (!(root instanceof ViewGroup)) return;
+        ViewGroup content = root.findViewById(android.R.id.content);
+        if (content == null) return;
+        for (int i = 0; i < content.getChildCount(); i++) {
+            View child = content.getChildAt(i);
+            if (child instanceof CustomWallView) child.setVisibility(showWall ? View.VISIBLE : View.GONE);
+        }
+    }
+
     private static void applyRecursive(View view, Accent a, int text, Context ctx) {
-        Drawable bg = view.getBackground();
-        if (bg != null && bg.getConstantState() != null) {
-            Integer res = ORIG_STATES.get(bg.getConstantState());
-            if (res == null) res = APPLIED.get(bg.getConstantState());
-            if (res != null) {
-                view.setBackground(pillFor(ctx, res, a));
-                Drawable applied = view.getBackground();
-                if (applied.getConstantState() != null) APPLIED.put(applied.getConstantState(), res);
-            }
+        Integer res = null;
+        Object tagged = view.getTag(R.id.theme_pill_res);
+        if (tagged instanceof Integer) {
+            res = (Integer) tagged;
+        } else {
+            Drawable bg = view.getBackground();
+            if (bg != null && bg.getConstantState() != null) res = ORIG_STATES.get(bg.getConstantState());
+        }
+        if (res != null) {
+            view.setBackground(pillFor(ctx, res, a));
+            view.setTag(R.id.theme_pill_res, res);
         }
         if (view instanceof TextView) {
             TextView tv = (TextView) view;
