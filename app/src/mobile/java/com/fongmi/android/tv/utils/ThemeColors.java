@@ -20,7 +20,6 @@ import com.github.catvod.utils.Prefers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * 全局主题配置：强调色 / 全局文字颜色 / 全局背景颜色
@@ -44,9 +43,6 @@ public abstract class ThemeColors {
 
     /** 可选全局背景颜色，16 档深色系 */
     public static final Map<String, Integer> BG_COLORS = new LinkedHashMap<>();
-
-    /** 可选按钮样式：方角 / 圆角 / 胶囊 */
-    public static final Map<String, String> BUTTON_STYLES = new LinkedHashMap<>();
 
     /** 中文名：强调色（前 6 档专属名，其余回落文字颜色名） */
     private static final Map<String, String> ACCENT_LABELS = new LinkedHashMap<>();
@@ -155,10 +151,6 @@ public abstract class ThemeColors {
         LABELS.put("coffee", "咖啡棕");
         LABELS.put("aubergine", "茄紫");
         LABELS.put("plum", "深梅紫");
-
-        BUTTON_STYLES.put("square", "方角");
-        BUTTON_STYLES.put("rounded", "圆角");
-        BUTTON_STYLES.put("capsule", "胶囊");
     }
 
     /** 由文字色板生成强调色：light=提亮 1.25 倍，deep=加深 0.78 倍 */
@@ -203,15 +195,6 @@ public abstract class ThemeColors {
 
     public static void putBg(String key) {
         Prefers.put("theme_bg", key);
-    }
-
-    public static String getButtonKey() {
-        String key = Prefers.getString("theme_button", "capsule");
-        return BUTTON_STYLES.containsKey(key) ? key : "capsule";
-    }
-
-    public static void putButton(String key) {
-        Prefers.put("theme_button", key);
     }
 
     /** 当前强调色方案：手调 6 档优先，其余由文字色板生成 */
@@ -259,78 +242,48 @@ public abstract class ThemeColors {
         return map;
     }
 
-    /** 原始资源 ConstantState → 资源 ID，首次应用时构建 */
-    private static Map<Object, Integer> ORIG_STATES;
-
-    /** 已应用胶囊的 ConstantState → 资源 ID，支持反复换色时识别旧胶囊 */
-    private static final Map<Object, Integer> APPLIED = new WeakHashMap<>();
-
-    private static int sLastText = Color.WHITE;
-    private static int sLastTint = Color.WHITE;
-
     /** 应用全局主题：遍历界面替换胶囊背景与纯白文字/图标（Activity 启动与设置变更时调用） */
     public static void apply(View root) {
         Context ctx = root.getContext();
         Accent a = getAccent();
         int text = getTextColor();
         root.setBackgroundColor(getBgColor());
-        if (ORIG_STATES == null) {
-            ORIG_STATES = new LinkedHashMap<>();
-            for (int res : PILL_DRAWABLES) {
-                Drawable orig = ContextCompat.getDrawable(ctx, res);
-                if (orig != null && orig.getConstantState() != null) ORIG_STATES.put(orig.getConstantState(), res);
-            }
+        Map<Object, Drawable> pills = new LinkedHashMap<>();
+        for (int res : PILL_DRAWABLES) {
+            Drawable orig = ContextCompat.getDrawable(ctx, res);
+            if (orig != null && orig.getConstantState() != null) pills.put(orig.getConstantState(), pillFor(ctx, res, a));
         }
-        applyRecursive(root, a, text, ctx);
-        sLastText = text;
-        sLastTint = text;
+        applyRecursive(root, a, text, pills);
     }
 
-    private static void applyRecursive(View view, Accent a, int text, Context ctx) {
+    private static void applyRecursive(View view, Accent a, int text, Map<Object, Drawable> pills) {
         Drawable bg = view.getBackground();
         if (bg != null && bg.getConstantState() != null) {
-            Integer res = ORIG_STATES.get(bg.getConstantState());
-            if (res == null) res = APPLIED.get(bg.getConstantState());
-            if (res != null) {
-                view.setBackground(pillFor(ctx, res, a));
-                Drawable applied = view.getBackground();
-                if (applied.getConstantState() != null) APPLIED.put(applied.getConstantState(), res);
-            }
+            Drawable replacement = pills.get(bg.getConstantState());
+            if (replacement != null) view.setBackground(replacement.mutate());
         }
         if (view instanceof TextView) {
             TextView tv = (TextView) view;
-            int cur = tv.getCurrentTextColor();
-            if (cur == Color.WHITE || cur == sLastText) tv.setTextColor(text);
+            if (tv.getCurrentTextColor() == Color.WHITE) tv.setTextColor(text);
         }
         if (view instanceof ImageView) {
             ImageView iv = (ImageView) view;
-            if (iv.getImageTintList() != null) {
-                int cur = iv.getImageTintList().getDefaultColor();
-                if (cur == Color.WHITE || cur == sLastTint) iv.setImageTintList(android.content.res.ColorStateList.valueOf(text));
-            }
+            if (iv.getImageTintList() != null && iv.getImageTintList().getDefaultColor() == Color.WHITE) iv.setImageTintList(android.content.res.ColorStateList.valueOf(text));
         }
         if (view instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) view;
-            for (int i = 0; i < group.getChildCount(); i++) applyRecursive(group.getChildAt(i), a, text, ctx);
+            for (int i = 0; i < group.getChildCount(); i++) applyRecursive(group.getChildAt(i), a, text, pills);
         }
-    }
-
-    /** 按钮样式对应的圆角：方角 6dp，圆角 14dp，胶囊保持原值 */
-    private static float shapeRadius(Context ctx, float base) {
-        String style = getButtonKey();
-        if ("square".equals(style)) return dp(ctx, 6);
-        if ("rounded".equals(style)) return dp(ctx, 14);
-        return base;
     }
 
     /** 按资源名重建对应结构的强调色胶囊（保持原圆角/形状/描边/高光） */
     private static Drawable pillFor(Context ctx, int res, Accent a) {
-        if (res == R.drawable.shape_item || res == R.drawable.shape_item_glass) return pill(ctx, a, shapeRadius(ctx, dp(ctx, 28)), true, true, true);
-        if (res == R.drawable.shape_accent) return pill(ctx, a, shapeRadius(ctx, dp(ctx, 28)), false, false, true);
-        if (res == R.drawable.shape_episode_capsule) return pill(ctx, a, shapeRadius(ctx, dp(ctx, 20)), true, true, false);
-        if (res == R.drawable.shape_search_bar_bg) return pill(ctx, a, shapeRadius(ctx, dp(ctx, 18)), false, false, false);
+        if (res == R.drawable.shape_item || res == R.drawable.shape_item_glass) return pill(ctx, a, dp(ctx, 28), true, true, true);
+        if (res == R.drawable.shape_accent) return pill(ctx, a, dp(ctx, 28), false, false, true);
+        if (res == R.drawable.shape_episode_capsule) return pill(ctx, a, dp(ctx, 20), true, true, false);
+        if (res == R.drawable.shape_search_bar_bg) return pill(ctx, a, dp(ctx, 18), false, false, false);
         if (res == R.drawable.shape_control || res == R.drawable.shape_action_btn_bg) return pillOval(ctx, a, res == R.drawable.shape_control);
-        return pill(ctx, a, shapeRadius(ctx, dp(ctx, 28)), false, false, false);
+        return pill(ctx, a, dp(ctx, 28), false, false, false);
     }
 
     private static float dp(Context ctx, int v) {
