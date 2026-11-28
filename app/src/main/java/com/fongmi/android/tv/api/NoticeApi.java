@@ -40,7 +40,8 @@ public class NoticeApi {
                 cached = text;
                 cachedAt = System.currentTimeMillis();
             }
-            if (!TextUtils.isEmpty(text)) App.post(() -> callback.accept(text));
+            // 无论后台有没有数据都回调：空结果让调用方走兜底逻辑，避免跑马灯永远隐藏
+            App.post(() -> callback.accept(text));
         });
     }
 
@@ -55,7 +56,12 @@ public class NoticeApi {
                 if (!BoxApi.enabled(row) || !BoxApi.matchApp(row)) continue;
                 list.add(row);
             }
-            Collections.sort(list, (a, b) -> b.optInt("weigh") - a.optInt("weigh"));
+            // 权重字段兼容 weigh / weight 两种写法，按权重降序
+            Collections.sort(list, (a, b) -> {
+                int aw = a.optInt("weigh", a.optInt("weight"));
+                int bw = b.optInt("weigh", b.optInt("weight"));
+                return bw - aw;
+            });
             StringBuilder sb = new StringBuilder();
             List<String> seen = new ArrayList<>();
             for (JSONObject row : list) {

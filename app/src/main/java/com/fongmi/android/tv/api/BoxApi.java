@@ -139,9 +139,15 @@ public class BoxApi {
         return BASE + (path.startsWith("/") ? path : "/" + path);
     }
 
-    /** 这条记录是否属于电视端。box_app_ids 形如 "10000,10004"。 */
+    /** 这条记录是否属于电视端。box_app_ids 形如 "10000,10004"；留空 = 全平台通用；按逗号分段精确匹配，避免 "1000" 误配 "10000"。 */
     public static boolean matchApp(JSONObject row) {
-        return row != null && row.optString("box_app_ids").contains(APP_ID);
+        if (row == null) return false;
+        String ids = row.optString("box_app_ids").trim();
+        if (ids.isEmpty()) return true;
+        for (String part : ids.split("[,，\\s]+")) {
+            if (APP_ID.equals(part.trim())) return true;
+        }
+        return false;
     }
 
     /** 是否启用。后台里 status 有的表用 "1"/"0"，有的用 "normal"/"hidden"，统一判一下。 */
