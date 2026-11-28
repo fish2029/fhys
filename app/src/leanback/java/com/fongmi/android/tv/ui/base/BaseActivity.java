@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.ViewTreeObserver;
 
 import com.fongmi.android.tv.utils.ResUtil;
 
@@ -62,6 +63,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         Window window = getWindow();
         window.setLayout((int) (ResUtil.getScreenWidth() * fraction), ViewGroup.LayoutParams.WRAP_CONTENT);
         window.setGravity(Gravity.CENTER);
+        capDialogHeight(window);
+    }
+
+    /**
+     * 限制弹窗高度不超过屏幕的 80%：内容过长时在窗口内部滚动，不再纵向撑满屏幕。
+     */
+    private void capDialogHeight(Window window) {
+        View decor = window.getDecorView();
+        decor.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                decor.getViewTreeObserver().removeOnPreDrawListener(this);
+                int maxHeight = (int) (ResUtil.getScreenHeight() * 0.8f);
+                if (decor.getHeight() > maxHeight) window.setLayout(window.getAttributes().width, maxHeight);
+                return true;
+            }
+        });
     }
 
     protected boolean customWall() {
