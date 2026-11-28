@@ -36,6 +36,7 @@ import com.fongmi.android.tv.R;
 import com.fongmi.android.tv.Updater;
 import com.fongmi.android.tv.BuildConfig;
 import com.fongmi.android.tv.api.BoxApi;
+import com.fongmi.android.tv.api.NoticeApi;
 import com.fongmi.android.tv.api.config.LiveConfig;
 import com.fongmi.android.tv.api.config.VodConfig;
 import com.fongmi.android.tv.api.config.WallConfig;
@@ -591,11 +592,18 @@ private void addDoubanRow() {
     }
 
     // 顶栏中间的跑马灯公告。
-    // 唯一来源：后台配置 JSON 的 notice 字段（后台改 notice，跑马灯跟着变），代码里不写死文案。
+    // 优先拉后台「跑马灯公告」表（后台改了下次刷新就变）；后台没配或拉取失败时，退回配置 JSON 的 notice 字段。
     private void setNotice() {
         if (mBinding.notice == null) return;
-        String text = VodConfig.get().getConfig() == null ? "" : VodConfig.get().getConfig().getNotice();
-        applyNotice(text);
+        NoticeApi.load(text -> {
+            if (mBinding.notice == null) return;
+            if (!TextUtils.isEmpty(text)) {
+                applyNotice(text);
+                return;
+            }
+            String fallback = VodConfig.get().getConfig() == null ? "" : VodConfig.get().getConfig().getNotice();
+            applyNotice(fallback);
+        });
     }
 
     private void applyNotice(String text) {
