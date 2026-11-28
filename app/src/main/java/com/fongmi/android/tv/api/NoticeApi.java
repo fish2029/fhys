@@ -40,9 +40,17 @@ public class NoticeApi {
                 cached = text;
                 cachedAt = System.currentTimeMillis();
             }
-            // 无论后台有没有数据都回调：空结果让调用方走兜底逻辑，避免跑马灯永远隐藏
+            // 无论有没有内容都要回调：调用方需要在后台没配或拉取失败时退回配置 JSON 的 notice。
+            // 只在有内容时回调会让 fallback 永远不执行，公告直接消失。
             App.post(() -> callback.accept(text));
         });
+    }
+
+    /** 后台权重字段有 weigh / weight 两种写法，取到哪个算哪个。 */
+    private static int weight(JSONObject row) {
+        if (row == null) return 0;
+        if (row.has("weigh")) return row.optInt("weigh");
+        return row.optInt("weight", 0);
     }
 
     /** 只留启用 + 绑定电视端的公告，按权重降序，内容相同的只留一条。 */
@@ -56,12 +64,8 @@ public class NoticeApi {
                 if (!BoxApi.enabled(row) || !BoxApi.matchApp(row)) continue;
                 list.add(row);
             }
-            // 权重字段兼容 weigh / weight 两种写法，按权重降序
-            Collections.sort(list, (a, b) -> {
-                int aw = a.optInt("weigh", a.optInt("weight"));
-                int bw = b.optInt("weigh", b.optInt("weight"));
-                return bw - aw;
-            });
+            // 权重字段兼容 weigh / weight 两种写法，缺省按 0 处理
+            Collections.sort(list, (a, b) -> weight(b) - weight(a));
             StringBuilder sb = new StringBuilder();
             List<String> seen = new ArrayList<>();
             for (JSONObject row : list) {

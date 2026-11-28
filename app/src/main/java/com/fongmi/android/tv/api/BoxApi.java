@@ -139,13 +139,17 @@ public class BoxApi {
         return BASE + (path.startsWith("/") ? path : "/" + path);
     }
 
-    /** 这条记录是否属于电视端。box_app_ids 形如 "10000,10004"；留空 = 全平台通用；按逗号分段精确匹配，避免 "1000" 误配 "10000"。 */
+    /**
+     * 这条记录是否属于电视端。box_app_ids 形如 "10000,10004"。
+     * 留空视为全平台通用（后台常见做法，不填就是所有端可见）；
+     * 填了则必须精确包含本端 ID，避免 "1000" 误配 "10000" 这类子串误判。
+     */
     public static boolean matchApp(JSONObject row) {
         if (row == null) return false;
-        String ids = row.optString("box_app_ids").trim();
+        String ids = row.optString("box_app_ids", "").trim();
         if (ids.isEmpty()) return true;
-        for (String part : ids.split("[,，\\s]+")) {
-            if (APP_ID.equals(part.trim())) return true;
+        for (String id : ids.split(",")) {
+            if (APP_ID.equals(id.trim())) return true;
         }
         return false;
     }
