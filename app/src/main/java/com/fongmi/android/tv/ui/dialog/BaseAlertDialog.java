@@ -2,6 +2,7 @@ package com.fongmi.android.tv.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -24,6 +25,10 @@ public abstract class BaseAlertDialog extends DialogFragment {
         Dialog dialog = getBuilder().create();
         initView();
         initEvent();
+        // 部分 TV 系统上弹窗位置可能偏移，强制水平垂直居中显示
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setGravity(Gravity.CENTER);
+        }
         return dialog;
     }
 
