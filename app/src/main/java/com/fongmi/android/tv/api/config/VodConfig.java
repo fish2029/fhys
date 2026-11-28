@@ -37,6 +37,7 @@ public class VodConfig extends BaseConfig {
 
     private Site home;
     private String wall;
+    private String dynamicNotice;
     private Parse parse;
     private List<Doh> doh;
     private List<Rule> rules;
@@ -87,6 +88,7 @@ public class VodConfig extends BaseConfig {
         doh = null;
         home = null;
         wall = null;
+        dynamicNotice = null;
         parse = null;
         sites = null;
         flags = null;
@@ -210,7 +212,9 @@ public class VodConfig extends BaseConfig {
 
     // 动态地址 / 线路聚合：{ "return": [ { "url": "...", "name": "..." } ] }
     // 后台通过该单入口控制实际 box 配置接口（可换源/故障转移），App 取第一条作为真实配置加载。
+    // 总地址可带顶层 "notice" 字段：写了就优先作为跑马灯公告，没写则沿用二级配置自带的 notice。
     private void parseReturn(Config config, JsonObject object) throws Throwable {
+        dynamicNotice = Json.safeString(object, "notice");
         List<Depot> items = Depot.arrayFrom(object.getAsJsonArray("return").toString());
         List<Config> configs = new ArrayList<>();
         for (Depot item : items) configs.add(Config.find(item, VOD));
@@ -220,6 +224,7 @@ public class VodConfig extends BaseConfig {
     }
 
     private void parseDepot(Config config, JsonObject object) throws Throwable {
+        dynamicNotice = Json.safeString(object, "notice");
         List<Depot> items = Depot.arrayFrom(object.getAsJsonArray("urls").toString());
         List<Config> configs = new ArrayList<>();
         for (Depot item : items) configs.add(Config.find(item, VOD));
@@ -235,7 +240,9 @@ public class VodConfig extends BaseConfig {
         initSite(config, object);
         initParse(config, object);
         config.setLogo(Json.safeString(object, "logo"));
-        config.setNotice(Json.safeString(object, "notice"));
+        String notice = Json.safeString(object, "notice");
+        if (!TextUtils.isEmpty(dynamicNotice)) notice = dynamicNotice;
+        config.setNotice(notice);
         config.setDanmaku(Json.safeString(object, "danmaku"));
     }
 
