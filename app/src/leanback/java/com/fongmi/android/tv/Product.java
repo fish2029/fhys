@@ -10,9 +10,9 @@ public class Product {
         return 0;
     }
 
-    /** 电视版不内置配置源，与原有行为一致 */
+    /** 电视版内置配置源：与手机版同一个接口，首次启动（本地还没有任何配置时）自动载入 */
     public static String getVodUrl() {
-        return "";
+        return "https://cnb.cool/MyTest2026/tvbox/-/git/raw/main/tvbox.json";
     }
 
     public static int getColumn() {
