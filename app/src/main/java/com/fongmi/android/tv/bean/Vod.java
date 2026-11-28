@@ -154,15 +154,19 @@ public class Vod implements Parcelable, Diffable<Vod> {
     }
 
     public String getPic() {
-        return TextUtils.isEmpty(vodPic) ? "" : vodPic.trim();
+        String pic = TextUtils.isEmpty(vodPic) ? "" : vodPic.trim();
+        // 源站可能返回不带 http/https 开头的半截地址，直接交给图片库会抛异常弹错误信息，这里拦掉
+        return pic.startsWith("http") ? pic : "";
     }
 
     public String getPicSlide() {
-        return TextUtils.isEmpty(vodPicSlide) ? "" : vodPicSlide.trim();
+        String pic = TextUtils.isEmpty(vodPicSlide) ? "" : vodPicSlide.trim();
+        return pic.startsWith("http") ? pic : "";
     }
 
     public String getPicThumb() {
-        return TextUtils.isEmpty(vodPicThumb) ? "" : vodPicThumb.trim();
+        String pic = TextUtils.isEmpty(vodPicThumb) ? "" : vodPicThumb.trim();
+        return pic.startsWith("http") ? pic : "";
     }
 
     public String getBanner() {

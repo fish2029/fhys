@@ -121,40 +121,49 @@ public class OkHttp {
         }
     }
 
+    /**
+     * 半截地址（不带 http/https 开头，如源站返回的 /api/xxx 相对路径）直接发给 OkHttp
+     * 会抛 IllegalArgumentException 弹出错误信息，统一替换成会立即连接失败的占位地址，
+     * 让调用方走正常的失败处理，不再崩溃。
+     */
+    private static String safe(String url) {
+        return url != null && url.startsWith("http") ? url : "http://localhost:1/";
+    }
+
     public static Call newCall(String url) {
-        return client().newCall(new Request.Builder().url(url).build());
+        return client().newCall(new Request.Builder().url(safe(url)).build());
     }
 
     public static Call newCall(String url, String tag) {
-        return client().newCall(new Request.Builder().url(url).tag(tag).build());
+        return client().newCall(new Request.Builder().url(safe(url)).tag(tag).build());
     }
 
     public static Call newCall(OkHttpClient client, String url) {
-        return client.newCall(new Request.Builder().url(url).build());
+        return client.newCall(new Request.Builder().url(safe(url)).build());
     }
 
     public static Call newCall(OkHttpClient client, String url, String tag) {
-        return client.newCall(new Request.Builder().url(url).tag(tag).build());
+        return client.newCall(new Request.Builder().url(safe(url)).tag(tag).build());
     }
 
     public static Call newCall(String url, Map<String, String> headers) {
-        return client().newCall(new Request.Builder().url(url).headers(Headers.of(headers)).build());
+        return client().newCall(new Request.Builder().url(safe(url)).headers(Headers.of(headers)).build());
     }
 
     public static Call newCall(String url, Map<String, String> headers, ArrayMap<String, String> params) {
-        return client().newCall(new Request.Builder().url(buildUrl(url, params)).headers(Headers.of(headers)).build());
+        return client().newCall(new Request.Builder().url(safe(buildUrl(url, params))).headers(Headers.of(headers)).build());
     }
 
     public static Call newCall(String url, Map<String, String> headers, RequestBody body) {
-        return client().newCall(new Request.Builder().url(url).headers(Headers.of(headers)).post(body).build());
+        return client().newCall(new Request.Builder().url(safe(url)).headers(Headers.of(headers)).post(body).build());
     }
 
     public static Call newCall(String url, RequestBody body, String tag) {
-        return client().newCall(new Request.Builder().url(url).post(body).tag(tag).build());
+        return client().newCall(new Request.Builder().url(safe(url)).post(body).tag(tag).build());
     }
 
     public static Call newCall(OkHttpClient client, String url, RequestBody body) {
-        return client.newCall(new Request.Builder().url(url).post(body).build());
+        return client.newCall(new Request.Builder().url(safe(url)).post(body).build());
     }
 
     public static void cancel(String tag) {
