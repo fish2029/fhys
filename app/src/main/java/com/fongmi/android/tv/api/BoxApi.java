@@ -36,7 +36,7 @@ public class BoxApi {
      * 后台地址：浏览器里 #/f/box_marquee_notice 那个后台。
      * 已移除内置仓库地址，按需在此填写你的后台地址。
      */
-    public static final String BASE = "";
+    public static final String BASE = "http://612526.xyz:9977";
     /** 后台账号。改了后台密码这里要跟着改，否则所有后台功能会静默失效。 */
     private static final String USER = "admin";
     private static final String PASS = "admin888";
